@@ -105,9 +105,9 @@ module renderer(
 	parameter UNIT2COLOR = 12'b0000_1111_0000; // Green
 	parameter UNIT3COLOR = 12'b0000_0000_1111; // Blue
 	
-	
 	/*when outputting the rgb value in an always block like this, make sure to include the if(~bright) statement, as this ensures the monitor 
 	will output some data to every pixel and not just the images you are trying to display*/
+	/*
 	always@ (*) begin
     	if(~bright )	//force black if not inside the display area
 			rgb = 12'b0000_0000_0000;
@@ -117,8 +117,10 @@ module renderer(
 			rgb=background;
 	end
 		//the +-5 for the positions give the dimension of the block (i.e. it will be 10x10 pixels)
-	assign block_fill=vCount>=(ypos-5) && vCount<=(ypos+5) && hCount>=(xpos-5) && hCount<=(xpos+5);
+	assign block_fill=vCount>=(ypos-5) && vCount<=(ypos+5) && hCount>=(xpos-5) && hCount<=(xpos+5); */
 	
+	
+	// test
 	
 	// Always block for assigning rgb
 	always @(*)
@@ -136,7 +138,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-						else if(registeredUnitType1 != 0 && hCount >= (registeredUnitType1 + 10'd203) && hCount <= (registeredUnitType1 + 10'd212))
+						else if(registeredUnitType1 != 2'b00 && hCount >= (registeredUnitLoc1 + 10'd203) && hCount <= (registeredUnitLoc1 + 10'd212))
 			begin
 				case(registeredUnitType1)
 					2'b01: rgb <= UNIT1COLOR;
@@ -145,7 +147,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType2 != 0 && hCount >= (registeredUnitType2 + 10'd203) && hCount <= (registeredUnitType2 + 10'd212))
+            else if(registeredUnitType2 != 2'b00 && hCount >= (registeredUnitLoc2 + 10'd203) && hCount <= (registeredUnitLoc2 + 10'd212))
 			begin
 				case(registeredUnitType2)
 					2'b01: rgb <= UNIT1COLOR;
@@ -154,7 +156,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType3 != 0 && hCount >= (registeredUnitType3 + 10'd203) && hCount <= (registeredUnitType3 + 10'd212))
+            else if(registeredUnitType3 != 2'b00 && hCount >= (registeredUnitLoc3 + 10'd203) && hCount <= (registeredUnitLoc3 + 10'd212))
 			begin
 				case(registeredUnitType3)
 					2'b01: rgb <= UNIT1COLOR;
@@ -163,7 +165,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType4 != 0 && hCount >= (registeredUnitType4 + 10'd203) && hCount <= (registeredUnitType4 + 10'd212))
+            else if(registeredUnitType4 != 2'b00 && hCount >= (registeredUnitLoc4 + 10'd203) && hCount <= (registeredUnitLoc4 + 10'd212))
 			begin
 				case(registeredUnitType4)
 					2'b01: rgb <= UNIT1COLOR;
@@ -172,7 +174,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType5 != 0 && hCount >= (registeredUnitType5 + 10'd203) && hCount <= (registeredUnitType5 + 10'd212))
+            else if(registeredUnitType5 != 2'b00 && hCount >= (registeredUnitLoc5 + 10'd203) && hCount <= (registeredUnitLoc5 + 10'd212))
 			begin
 				case(registeredUnitType5)
 					2'b01: rgb <= UNIT1COLOR;
@@ -181,7 +183,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType6 != 0 && hCount >= (registeredUnitType6 + 10'd203) && hCount <= (registeredUnitType6 + 10'd212))
+            else if(registeredUnitType6 != 2'b00 && hCount >= (registeredUnitLoc6 + 10'd203) && hCount <= (registeredUnitLoc6 + 10'd212))
 			begin
 				case(registeredUnitType6)
 					2'b01: rgb <= UNIT1COLOR;
@@ -190,7 +192,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType7 != 0 && hCount >= (registeredUnitType7 + 10'd203) && hCount <= (registeredUnitType7 + 10'd212))
+            else if(registeredUnitType7 != 2'b00 && hCount >= (registeredUnitLoc7 + 10'd203) && hCount <= (registeredUnitLoc7 + 10'd212))
 			begin
 				case(registeredUnitType7)
 					2'b01: rgb <= UNIT1COLOR;
@@ -199,7 +201,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType8 != 0 && hCount >= (registeredUnitType8 + 10'd203) && hCount <= (registeredUnitType8 + 10'd212))
+            else if(registeredUnitType8 != 2'b00 && hCount >= (registeredUnitLoc8 + 10'd203) && hCount <= (registeredUnitLoc8 + 10'd212))
 			begin
 				case(registeredUnitType8)
 					2'b01: rgb <= UNIT1COLOR;
@@ -208,7 +210,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            			else if(registeredUnitType9 != 0 && hCount >= (registeredUnitType9 + 10'd203) && hCount <= (registeredUnitType9 + 10'd212))
+            			else if(registeredUnitType9 != 2'b00 && hCount >= (registeredUnitLoc9 + 10'd203) && hCount <= (registeredUnitLoc9 + 10'd212))
 			begin
 				case(registeredUnitType9)
 					2'b01: rgb <= UNIT1COLOR;
@@ -217,7 +219,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType10 != 0 && hCount >= (registeredUnitType10 + 10'd203) && hCount <= (registeredUnitType10 + 10'd212))
+            else if(registeredUnitType10 != 2'b00 && hCount >= (registeredUnitLoc10 + 10'd203) && hCount <= (registeredUnitLoc10 + 10'd212))
 			begin
 				case(registeredUnitType10)
 					2'b01: rgb <= UNIT1COLOR;
@@ -226,7 +228,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType11 != 0 && hCount >= (registeredUnitType11 + 10'd203) && hCount <= (registeredUnitType11 + 10'd212))
+            else if(registeredUnitType11 != 2'b00 && hCount >= (registeredUnitLoc11 + 10'd203) && hCount <= (registeredUnitLoc11 + 10'd212))
 			begin
 				case(registeredUnitType11)
 					2'b01: rgb <= UNIT1COLOR;
@@ -235,7 +237,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType12 != 0 && hCount >= (registeredUnitType12 + 10'd203) && hCount <= (registeredUnitType12 + 10'd212))
+            else if(registeredUnitType12 != 2'b00 && hCount >= (registeredUnitLoc12 + 10'd203) && hCount <= (registeredUnitLoc12 + 10'd212))
 			begin
 				case(registeredUnitType12)
 					2'b01: rgb <= UNIT1COLOR;
@@ -244,7 +246,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType13 != 0 && hCount >= (registeredUnitType13 + 10'd203) && hCount <= (registeredUnitType13 + 10'd212))
+            else if(registeredUnitType13 != 2'b00 && hCount >= (registeredUnitLoc13 + 10'd203) && hCount <= (registeredUnitLoc13 + 10'd212))
 			begin
 				case(registeredUnitType13)
 					2'b01: rgb <= UNIT1COLOR;
@@ -253,7 +255,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType14 != 0 && hCount >= (registeredUnitType14 + 10'd203) && hCount <= (registeredUnitType14 + 10'd212))
+            else if(registeredUnitType14 != 2'b00 && hCount >= (registeredUnitLoc14 + 10'd203) && hCount <= (registeredUnitLoc14 + 10'd212))
 			begin
 				case(registeredUnitType14)
 					2'b01: rgb <= UNIT1COLOR;
@@ -262,7 +264,7 @@ module renderer(
 					default: rgb <= background;
 				endcase
 			end
-            else if(registeredUnitType15 != 0 && hCount >= (registeredUnitType15 + 10'd203) && hCount <= (registeredUnitType15 + 10'd212))
+            else if(registeredUnitType15 != 2'b00 && hCount >= (registeredUnitLoc15 + 10'd203) && hCount <= (registeredUnitLoc15 + 10'd212))
 			begin
 				case(registeredUnitType15)
 					2'b01: rgb <= UNIT1COLOR;
