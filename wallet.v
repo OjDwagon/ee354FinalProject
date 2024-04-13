@@ -5,9 +5,9 @@ module Wallet(
 	input gameClk,
 	input rst,
 	input purchase,
-	input [11:0] unitCost,
+	input [12:0] unitCost,
 	output reg [1:0] level,
-	output reg [11:0] balance,
+	output reg [10:0] balance,
 	output reg maxed,
 	output reg buySucc
    );
