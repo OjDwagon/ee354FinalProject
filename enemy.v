@@ -24,7 +24,6 @@ reg [7:0] power; // determines how strong an enemy's attack is
 reg [7:0] health; // internal to the unit, keeps track how much health they have left
 reg [3:0] I; // dummy counter for dead state
 
-assign {QI, QDeploy0, QDeploy1, QDeploy2, QDeploy3, QAlive, QDead} = state;
 reg [6:0] state;
 
 localparam
@@ -47,6 +46,7 @@ begin
 			QI:
 				begin
 					// state transition
+					
 					case({SW0, SW1, SW2, SW3}):
 						4'b1000: state <= QDeploy0;
 						4'b0100: state <= QDeploy1;
@@ -55,7 +55,7 @@ begin
 					endcase
 			
 					// RTL
-					position <= 9'b1111_1111_1;
+					position <= 9'b0000_0000_0; // CHANGED FROM PLAYER
 					I <= 3'b000;
 					damageIn <= 8'b0000_0000;
 					damageOut <= 8'b0000_0000;
@@ -89,6 +89,7 @@ begin
 					// RTL
 					
 					// accept damage provided by TOP, can be 0 to whatever the attack damage is of enemy units
+					dead <= 1'b0;
 					if(damageSCEN) health <= health - damageIn;
 					if(moveSCEN) // move
 						position <= position + 1; // <-- CHANGE TO POSITIVE IN ENEMY.V
@@ -101,6 +102,7 @@ begin
 				begin
 					if(I == 4'1010) state <= QI;
 					I <= I + 4'b0001;
+					dead <= 1'b1;
 				end
 			default: state <= UNK;
 		endcase

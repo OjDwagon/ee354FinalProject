@@ -15,6 +15,8 @@ module Unit(
 	input SW2,
 	input SW3,
 	
+	input purchase,
+	
 	output [8:0] position, // choose how many bits we need for position
 	output [7:0] damageOut, // choose how many bits we need for damange
 	output dead
@@ -24,7 +26,6 @@ reg [7:0] power; // determines how strong an enemy's attack is
 reg [7:0] health; // internal to the unit, keeps track how much health they have left
 reg [3:0] I; // dummy counter for dead state
 
-assign {QI, QDeploy0, QDeploy1, QDeploy2, QDeploy3, QAlive, QDead} = state;
 reg [6:0] state;
 
 localparam
@@ -36,8 +37,8 @@ localparam
 	QAlive   = 7'b0000010,
 	QDead =    7'b0000001,
 	UNK =      7'bXXXXXXX;
-	
-always@(posedge clk, posedge reset)
+
+always@(posedge clk, posedge reset) // might have to the change this from clk to gameClk later
 begin
 	if(reset)
 		state <= QI;
@@ -47,12 +48,15 @@ begin
 			QI:
 				begin
 					// state transition
-					case({SW0, SW1, SW2, SW3}):
-						4'b1000: state <= QDeploy0;
-						4'b0100: state <= QDeploy1;
-						4'b0010: state <= QDeploy2;
-						4'b0001: state <= QDeploy3;
-					endcase
+					if(purchase)
+					begin
+						case({SW0, SW1, SW2, SW3}):
+							4'b1000: state <= QDeploy0;
+							4'b0100: state <= QDeploy1;
+							4'b0010: state <= QDeploy2;
+							4'b0001: state <= QDeploy3;
+						endcase
+					end
 			
 					// RTL
 					position <= 9'b1111_1111_1;
@@ -89,6 +93,7 @@ begin
 					// RTL
 					
 					// accept damage provided by TOP, can be 0 to whatever the attack damage is of enemy units
+					dead <= 1'b0;
 					if(damageSCEN) health <= health - damageIn;
 					if(moveSCEN) // move
 						position <= position - 1; // <-- CHANGE TO POSITIVE IN ENEMY.V
@@ -101,6 +106,7 @@ begin
 				begin
 					if(I == 4'1010) state <= QI;
 					I <= I + 4'b0001;
+					dead <= 1'b1;
 				end
 			default: state <= UNK;
 		endcase
