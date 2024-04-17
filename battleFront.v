@@ -100,8 +100,8 @@ module BattleFront(
 			begin
 				currUnitLoc = unitLoc0;
 				currUnitType = unitType0;
-                currEnemyLoc = enemyLoc8;
-                currEnemyType = enemyType8;
+                currEnemyLoc = enemyLoc0;
+                currEnemyType = enemyType0;
 			end
 			4'b0001:
 			begin
