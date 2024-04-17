@@ -33,7 +33,7 @@ begin
 		state <= QI;
 	else 
 	begin
-		case(state):
+		case(state)
 			QI:
 			begin
 				health <= 8'b1111_1111;

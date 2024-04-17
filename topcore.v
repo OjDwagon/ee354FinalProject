@@ -33,7 +33,7 @@ begin
 	if(reset) state <= QWaitBF;
 	else
 		begin
-			case(state):
+			case(state)
 				QWaitBF:
 				begin
 					if(battlefrontDone) state <= QMoveCalc;
