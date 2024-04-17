@@ -24,6 +24,7 @@ module BattleFrontTB;
 	
 	// Outputs
 	wire [8:0] friendlyFront, enemyFront;
+	wire [4:0]	unitDamageSelect, enemyDamageSelect;
 	wire Done;
 	
 	// Test bench parameters
@@ -104,6 +105,8 @@ module BattleFrontTB;
 	.enemyType15(enemyType15),
 	.friendlyFront(friendlyFront),
 	.enemyFront(enemyFront),
+	.unitDamageSelect(unitDamageSelect),
+	.enemyDamageSelect(enemyDamageSelect),
 	.Done(Done)
    );
 		
@@ -328,6 +331,7 @@ module BattleFrontTB;
 		@(posedge clk);		
 		Ack = 0;
 		$fdisplay(file_fd, "In test number %d the friendlyFront is %d and the enemyFront is %d", testNum, friendlyFront, enemyFront);
+		$fdisplay(file_fd, "The friendlySelect is %d and the enemySelect is %d", unitDamageSelect, enemyDamageSelect);
 		$fdisplay(file_fd, "It took %d clock(s) to compute the battlefront for test number %d", clocks_taken, testNum);
 		#20;
 	end

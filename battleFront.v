@@ -74,6 +74,8 @@ module BattleFront(
 	input [1:0] enemyType15,
 	output reg [8:0] friendlyFront,
 	output reg [8:0] enemyFront,
+	output reg [4:0] unitDamageSelect,
+	output reg [4:0] enemyDamageSelect,
 	output Done
    );
 	
@@ -220,6 +222,8 @@ module BattleFront(
 			I <= 4'bXXXX;
 			enemyFront <= 9'bXXXX_XXXX_X;
 			friendlyFront <= 9'bXXXX_XXXX_X;
+			unitDamageSelect <= 5'bXXXX_X;
+			enemyDamageSelect <= 5'bXXXX_X;
 		end
 		else
 		begin
@@ -230,12 +234,28 @@ module BattleFront(
 					I <= 1;
 					
 					// If the first enemy doesn't exist, use the tower lcoation
-					if(enemyType0 != 2'b00) enemyFront <= enemyLoc0;
-					else enemyFront <= 9'b0000_0000_0;
+					if(enemyType0 != 2'b00)
+					begin
+						enemyFront <= enemyLoc0;
+						enemyFront <= 5'b0000_0;
+					end
+					else 
+					begin
+						enemyFront <= 9'b0000_0000_0;
+						enemyDamageSelect <= 5'b1000_0;
+					end
 					
 					// If the first unit doesn't exist, use the tower location
-					if(unitType0 != 2'b00) friendlyFront <= unitLoc0;
-					else friendlyFront <= 9'b1111_1111_1;
+					if(unitType0 != 2'b00)
+					begin	
+						friendlyFront <= unitLoc0;
+						unitDamageSelect <= 5'b0000_0;
+					end
+					else
+					begin
+						friendlyFront <= 9'b1111_1111_1;
+						unitDamageSelect <= 5'b1000_0;
+					end
 				end
 				
 				UPDATE:
@@ -244,8 +264,16 @@ module BattleFront(
 					
 					I <= I + 1;
 					
-					if(currEnemyType != 2'b00 && currEnemyLoc > enemyFront) enemyFront <= currEnemyLoc;
-					if(currUnitType != 2'b00 && currUnitLoc < friendlyFront) friendlyFront <= currUnitLoc;
+					if(currEnemyType != 2'b00 && currEnemyLoc > enemyFront)
+					begin
+						enemyFront <= currEnemyLoc;
+						enemyDamageSelect <= I;
+					end
+					if(currUnitType != 2'b00 && currUnitLoc < friendlyFront)
+					begin
+						friendlyFront <= currUnitLoc;
+						unitDamageSelect <= I;
+					end
 					
 				end
 				ADJUST:
