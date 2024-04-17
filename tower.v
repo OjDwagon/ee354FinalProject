@@ -11,20 +11,21 @@ module Tower( // // might have to the change this from clk to gameClk later
 	input player, // determines if the tower being instantiated is a player tower or an enemy tower
 	input startLevel,
 	
-	output [7:0] health,
-	output dead,
-	output levelComplete,
+	output reg [7:0] health,
+	output reg dead,
+	output reg levelComplete
 );
 
 reg [4:0] state;
 reg [8:0] position;
+reg [3:0] I;
 
 localparam
 	QI =       5'b10000,
 	QDeployP = 5'b01000,
 	QDeployE = 5'b00100,
 	QAlive =   5'b00010,
-	QDead =    5'b00001;
+	QDead =    5'b00001,
 	UNK =      5'bXXXXX;
 
 always@(posedge clk, posedge reset)
@@ -38,6 +39,7 @@ begin
 			begin
 				health <= 8'b1111_1111;
 				levelComplete <= 1'b0;
+				I <= 4'b0000;
 				if(startLevel & player) state <= QDeployP;
 				else if(startLevel & !player) state <= QDeployE;
 			
@@ -60,7 +62,7 @@ begin
 			end
 			QDead:
 			begin
-				if(I == 4'1010) state <= QI;
+				if(I == 4'b1010) state <= QI;
 				I <= I + 4'b0001;
 				dead <= 1'b1;
 				levelComplete <= 1'b1; // MIGHT NEED TO DIFFERENTIATE BETWEEN ENEMY AND PLAYER HERE

@@ -56,18 +56,18 @@ begin
 					// state transition
 					if(purchase)
 					begin
-						case({SW0, SW1, SW2, SW3})
+						case({SW1, SW2, SW3})
 							//4'b1000: state <= QDeploy0;
-							4'b0100: state <= QDeploy1;
-							4'b0010: state <= QDeploy2;
-							4'b0001: state <= QDeploy3;
+							3'b100: state <= QDeploy1;
+							3'b010: state <= QDeploy2;
+							3'b001: state <= QDeploy3;
 						endcase
 					end
 			
 					// RTL
 					position <= 9'b1111_1111_1;
 					//I <= 3'b000;
-					damageIn <= 8'b0000_0000;
+					// damageIn <= 8'b0000_0000;
 					damageOut <= 8'b0000_0000;
 					power <= 8'b0000_0000;
 				end

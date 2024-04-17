@@ -8,7 +8,8 @@ module TopCore(
 	input battlefrontDone, // comes from battlefrontCalculator 
 	input gameSCEN, // from gameEngine.v
 	
-	output battlefrontACK, // gives battelfront signal an ACK signal, so it can move from DONE state to start calculating again
+	output reg battlefrontACK, // gives battelfront signal an ACK signal, so it can move from DONE state to start calculating again
+	output reg damageCalcACK,
 	
 	output moveSCEN, 
 	output damageSCEN // goes to damager calculator on the top
@@ -37,6 +38,7 @@ begin
 				QWaitBF:
 				begin
 					if(battlefrontDone) state <= QMoveCalc;
+					damageCalcACK <= 1'b0;
 				end
 				QMoveCalc:
 				begin
@@ -59,6 +61,7 @@ begin
 				begin
 					if(gameSCEN) state <= QWaitBF;
 					battlefrontACK <= 1'b0;
+					damageCalcACK <= 1'b1;
 				end
 			endcase
 		end

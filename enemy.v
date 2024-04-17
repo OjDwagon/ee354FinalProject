@@ -56,7 +56,7 @@ begin
 					// RTL
 					position <= 9'b0000_0000_0; // CHANGED FROM PLAYER
 					//I <= 3'b000;
-					damageIn <= 8'b0000_0000;
+					// damageIn <= 8'b0000_0000;
 					damageOut <= 8'b0000_0000;
 					power <= 8'b0000_0000;
 					

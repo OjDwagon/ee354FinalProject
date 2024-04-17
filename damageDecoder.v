@@ -4,43 +4,54 @@
 module DamageDecoder(
 	input [4:0] unitDamageSelect,
 	input [4:0] enemyDamageSelect,
-	input [8:0] totalUnitDamage,
-	input [8:0] totalEnemyDamage,
-	output reg [8:0] unitAppliedDamage0,
-	output reg [8:0] unitAppliedDamage1,
-	output reg [8:0] unitAppliedDamage2,
-	output reg [8:0] unitAppliedDamage3,
-	output reg [8:0] unitAppliedDamage4,
-	output reg [8:0] unitAppliedDamage5,
-	output reg [8:0] unitAppliedDamage6,
-	output reg [8:0] unitAppliedDamage7,
-	output reg [8:0] unitAppliedDamage8,
-	output reg [8:0] unitAppliedDamage9,
-	output reg [8:0] unitAppliedDamage10,
-	output reg [8:0] unitAppliedDamage11,
-	output reg [8:0] unitAppliedDamage12,
-	output reg [8:0] unitAppliedDamage13,
-	output reg [8:0] unitAppliedDamage14,
-	output reg [8:0] unitAppliedDamage15,
-	output reg [8:0] enemyAppliedDamage0,
-	output reg [8:0] enemyAppliedDamage1,
-	output reg [8:0] enemyAppliedDamage2,
-	output reg [8:0] enemyAppliedDamage3,
-	output reg [8:0] enemyAppliedDamage4,
-	output reg [8:0] enemyAppliedDamage5,
-	output reg [8:0] enemyAppliedDamage6,
-	output reg [8:0] enemyAppliedDamage7,
-	output reg [8:0] enemyAppliedDamage8,
-	output reg [8:0] enemyAppliedDamage9,
-	output reg [8:0] enemyAppliedDamage10,
-	output reg [8:0] enemyAppliedDamage11,
-	output reg [8:0] enemyAppliedDamage12,
-	output reg [8:0] enemyAppliedDamage13,
-	output reg [8:0] enemyAppliedDamage14,
-	output reg [8:0] enemyAppliedDamage15,
-	output reg [8:0] friendlyTowerAppliedDamage,
-	output reg [8:0] enemyTowerAppliedDamage
+	input [11:0] totalUnitDamage,
+	input [11:0] totalEnemyDamage,
+	output reg [7:0] unitAppliedDamage0,
+	output reg [7:0] unitAppliedDamage1,
+	output reg [7:0] unitAppliedDamage2,
+	output reg [7:0] unitAppliedDamage3,
+	output reg [7:0] unitAppliedDamage4,
+	output reg [7:0] unitAppliedDamage5,
+	output reg [7:0] unitAppliedDamage6,
+	output reg [7:0] unitAppliedDamage7,
+	output reg [7:0] unitAppliedDamage8,
+	output reg [7:0] unitAppliedDamage9,
+	output reg [7:0] unitAppliedDamage10,
+	output reg [7:0] unitAppliedDamage11,
+	output reg [7:0] unitAppliedDamage12,
+	output reg [7:0] unitAppliedDamage13,
+	output reg [7:0] unitAppliedDamage14,
+	output reg [7:0] unitAppliedDamage15,
+	output reg [7:0] enemyAppliedDamage0,
+	output reg [7:0] enemyAppliedDamage1,
+	output reg [7:0] enemyAppliedDamage2,
+	output reg [7:0] enemyAppliedDamage3,
+	output reg [7:0] enemyAppliedDamage4,
+	output reg [7:0] enemyAppliedDamage5,
+	output reg [7:0] enemyAppliedDamage6,
+	output reg [7:0] enemyAppliedDamage7,
+	output reg [7:0] enemyAppliedDamage8,
+	output reg [7:0] enemyAppliedDamage9,
+	output reg [7:0] enemyAppliedDamage10,
+	output reg [7:0] enemyAppliedDamage11,
+	output reg [7:0] enemyAppliedDamage12,
+	output reg [7:0] enemyAppliedDamage13,
+	output reg [7:0] enemyAppliedDamage14,
+	output reg [7:0] enemyAppliedDamage15,
+	output reg [7:0] friendlyTowerAppliedDamage,
+	output reg [7:0] enemyTowerAppliedDamage
    );
+	
+	reg [7:0] scaledUnitDamage, scaledEnemyDamage;
+	
+	always @(*)
+	begin
+		if(totalUnitDamage >= 12'b0001_0000_0000) scaledUnitDamage <= 8'b1111_1111_1111;
+		else scaledUnitDamage <= totalUnitDamage[7:0];
+		
+		if(totalEnemyDamage >= 12'b0001_0000_0000) scaledEnemyDamage <= 8'b1111_1111_1111;
+		else scaledEnemyDamage <= totalEnemyDamage[7:0];
+	end
 	
 	// 17 to 1 decoder for applying damage to the correct unit (or tower)
 	always @(*)
@@ -65,71 +76,71 @@ module DamageDecoder(
 		case(unitDamageSelect)
 			5'b00000:
 			begin
-				unitAppliedDamage0 = totalUnitDamage;
+				unitAppliedDamage0 = scaledUnitDamage;
 			end
 			5'b00001:
 			begin
-				unitAppliedDamage1 = totalUnitDamage;
+				unitAppliedDamage1 = scaledUnitDamage;
 			end
 			5'b00010:
 			begin
-				unitAppliedDamage2 = totalUnitDamage;
+				unitAppliedDamage2 = scaledUnitDamage;
 			end 
 			5'b00011:
 			begin
-				unitAppliedDamage3 = totalUnitDamage;
+				unitAppliedDamage3 = scaledUnitDamage;
 			end  
 			5'b00100:
 			begin
-				unitAppliedDamage4 = totalUnitDamage;
+				unitAppliedDamage4 = scaledUnitDamage;
 			end
 			5'b00101:
 			begin
-				unitAppliedDamage5 = totalUnitDamage;
+				unitAppliedDamage5 = scaledUnitDamage;
 			end
 			5'b00110:
 			begin
-				unitAppliedDamage6 = totalUnitDamage;
+				unitAppliedDamage6 = scaledUnitDamage;
 			end 
 			5'b00111:
 			begin
-				unitAppliedDamage7 = totalUnitDamage;
+				unitAppliedDamage7 = scaledUnitDamage;
 			end
 			5'b01000:
 			begin
-				unitAppliedDamage8 = totalUnitDamage;
+				unitAppliedDamage8 = scaledUnitDamage;
 			end
 			5'b01001:
 			begin
-				unitAppliedDamage9 = totalUnitDamage;
+				unitAppliedDamage9 = scaledUnitDamage;
 			end
 			5'b01010:
 			begin
-				unitAppliedDamage10 = totalUnitDamage;
+				unitAppliedDamage10 = scaledUnitDamage;
 			end 
 			5'b01011:
 			begin
-				unitAppliedDamage11 = totalUnitDamage;
+				unitAppliedDamage11 = scaledUnitDamage;
 			end
 			5'b01100:
 			begin
-				unitAppliedDamage12 = totalUnitDamage;
+				unitAppliedDamage12 = scaledUnitDamage;
 			end
 			5'b01101:
 			begin
-				unitAppliedDamage13 = totalUnitDamage;
+				unitAppliedDamage13 = scaledUnitDamage;
 			end
 			5'b01110:
 			begin
-				unitAppliedDamage14 = totalUnitDamage;
+				unitAppliedDamage14 = scaledUnitDamage;
 			end 
 			5'b01111:
 			begin
-				unitAppliedDamage15 = totalUnitDamage;
+				unitAppliedDamage15 = scaledUnitDamage;
 			end 
 			default:
             begin
-                friendlyTowerAppliedDamage = totalUnitDamage;
+                friendlyTowerAppliedDamage = scaledUnitDamage;
             end		
 		endcase
 	end
@@ -157,71 +168,71 @@ module DamageDecoder(
 		case(enemyDamageSelect)
 			5'b00000:
 			begin
-				enemyAppliedDamage0 = totalEnemyDamage;
+				enemyAppliedDamage0 = scaledEnemyDamage;
 			end
 			5'b00001:
 			begin
-				enemyAppliedDamage1 = totalEnemyDamage;
+				enemyAppliedDamage1 = scaledEnemyDamage;
 			end
 			5'b00010:
 			begin
-				enemyAppliedDamage2 = totalEnemyDamage;
+				enemyAppliedDamage2 = scaledEnemyDamage;
 			end 
 			5'b00011:
 			begin
-				enemyAppliedDamage3 = totalEnemyDamage;
+				enemyAppliedDamage3 = scaledEnemyDamage;
 			end  
 			5'b00100:
 			begin
-				enemyAppliedDamage4 = totalEnemyDamage;
+				enemyAppliedDamage4 = scaledEnemyDamage;
 			end
 			5'b00101:
 			begin
-				enemyAppliedDamage5 = totalEnemyDamage;
+				enemyAppliedDamage5 = scaledEnemyDamage;
 			end
 			5'b00110:
 			begin
-				enemyAppliedDamage6 = totalEnemyDamage;
+				enemyAppliedDamage6 = scaledEnemyDamage;
 			end 
 			5'b00111:
 			begin
-				enemyAppliedDamage7 = totalEnemyDamage;
+				enemyAppliedDamage7 = scaledEnemyDamage;
 			end
 			5'b01000:
 			begin
-				enemyAppliedDamage8 = totalEnemyDamage;
+				enemyAppliedDamage8 = scaledEnemyDamage;
 			end
 			5'b01001:
 			begin
-				enemyAppliedDamage9 = totalEnemyDamage;
+				enemyAppliedDamage9 = scaledEnemyDamage;
 			end
 			5'b01010:
 			begin
-				enemyAppliedDamage10 = totalEnemyDamage;
+				enemyAppliedDamage10 = scaledEnemyDamage;
 			end 
 			5'b01011:
 			begin
-				enemyAppliedDamage11 = totalEnemyDamage;
+				enemyAppliedDamage11 = scaledEnemyDamage;
 			end
 			5'b01100:
 			begin
-				enemyAppliedDamage12 = totalEnemyDamage;
+				enemyAppliedDamage12 = scaledEnemyDamage;
 			end
 			5'b01101:
 			begin
-				enemyAppliedDamage13 = totalEnemyDamage;
+				enemyAppliedDamage13 = scaledEnemyDamage;
 			end
 			5'b01110:
 			begin
-				enemyAppliedDamage14 = totalEnemyDamage;
+				enemyAppliedDamage14 = scaledEnemyDamage;
 			end 
 			5'b01111:
 			begin
-				enemyAppliedDamage15 = totalEnemyDamage;
+				enemyAppliedDamage15 = scaledEnemyDamage;
 			end 
             default:
             begin
-                enemyTowerAppliedDamage = totalEnemyDamage;
+                enemyTowerAppliedDamage = scaledEnemyDamage;
             end		
 		endcase
 	end
