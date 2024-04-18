@@ -29,7 +29,7 @@ module BattleCatsTop(
 	input BtnL,
 	input BtnD,
 	input Sw1,
-	input Sw2, // these need to be Sw instead of SW
+	input Sw2, // these need to be Sw instead of SW following XDC file
 	input Sw3,
 	//VGA signal
 	output hSync, vSync,
@@ -49,7 +49,7 @@ module BattleCatsTop(
 	wire up,down,left,right;
 	wire [3:0] anode;
 	wire [11:0] rgb;
-	wire rst;
+	wire rst; // should this be edited
 	
 	reg [3:0]	SSD;
 	wire [3:0]	SSD3, SSD2, SSD1, SSD0;
@@ -78,29 +78,17 @@ module BattleCatsTop(
 	wire damageCalcACK;
 	wire moveSCEN, damageSCEN;
 	
-	// Unit and enemy location and type signals
+	// Unit and enemy location signals
 	wire [8:0] unitLoc0, unitLoc1, unitLoc2, 
         unitLoc3, unitLoc4, unitLoc5, 
         unitLoc6, unitLoc7, unitLoc8, 
         unitLoc9, unitLoc10, unitLoc11, 
         unitLoc12, unitLoc13, unitLoc14, 
-        unitLoc15, unitType0, unitType1, 
-        unitType2, unitType3, unitType4, 
-        unitType5, unitType6, unitType7, 
-        unitType8, unitType9, unitType10, 
-        unitType11, unitType12, unitType13, 
-        unitType14, unitType15, enemyLoc0, 
-        enemyLoc1, enemyLoc2, enemyLoc3, 
-        enemyLoc4, enemyLoc5, enemyLoc6, 
+        unitLoc15, enemyLoc0, enemyLoc1,
+		enemyLoc2, enemyLoc3, enemyLoc4, enemyLoc5, enemyLoc6, 
         enemyLoc7, enemyLoc8, enemyLoc9, 
         enemyLoc10, enemyLoc11, enemyLoc12, 
-        enemyLoc13, enemyLoc14, enemyLoc15, 
-        enemyType0, enemyType1, enemyType2,
-        enemyType3, enemyType4, enemyType5, 
-        enemyType6, enemyType7, enemyType8, 
-        enemyType9, enemyType10, enemyType11, 
-        enemyType12, enemyType13, enemyType14, 
-        enemyType15;
+        enemyLoc13, enemyLoc14, enemyLoc15;
 	
 	
 	// Damage select, total damage, and front signals
@@ -122,7 +110,7 @@ module BattleCatsTop(
         enemyAppliedDamage14, enemyAppliedDamage15, friendlyTowerAppliedDamage, 
         enemyTowerAppliedDamage;
 		
-	// Attack signals comming from units and enemies
+	// Attack signals coming from units and enemies
 	wire [7:0] unitAttack0, unitAttack1, unitAttack2, 
         unitAttack3, unitAttack4, unitAttack5, 
         unitAttack6, unitAttack7, unitAttack8, 
@@ -135,8 +123,16 @@ module BattleCatsTop(
         enemyAttack11, enemyAttack12, enemyAttack13, 
         enemyAttack14, enemyAttack15;
 	
-	assign purchase = 1'b1;
+	assign purchase = 1'b1; // For now we are having it so that the purchase signal is always up
 	
+	// enemy and unit wiring (changed to 2 bits)
+	wire [1:0] unitType0, unitType1, unitType2, unitType3,
+	unitType4, unitType5, unitType6, unitType7, unitType8,
+	unitType9, unitType10, unitType11, unitType12, unitType13,
+	unitType14, unitType15, enemyType0, enemyType1, enemyType2,
+	enemyType3, enemyType4, enemyType5, enemyType6, enemyType7,
+	enemyType8, enemyType9, enemyType10, enemyType11, enemyType12,
+	enemyType13, enemyType14, enemyType15;
 	
 	GameEngine engine(.clk(ClkPort), .rst(rst), .gameSCEN(gameSCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
@@ -215,7 +211,8 @@ module BattleCatsTop(
 	.battlefrontACK(battlefrontACK),
 	.damageCalcACK(damageCalcACK),
 	.moveSCEN(moveSCEN), 
-	.damageSCEN(damageSCEN));
+	.damageSCEN(damageSCEN)
+	);
 	
 	BattleFront battlefrontCalc(	
 	.clk(ClkPort),
@@ -338,7 +335,7 @@ module BattleCatsTop(
 		.rst(rst),
 		.Start(damageSCEN),
 		.Ack(damageCalcACK),
-		.unitAttack0(unitAttack0),
+		.unitAttack0(unitAttack0), 
 		.unitAttack1(unitAttack1),
 		.unitAttack2(unitAttack2),
 		.unitAttack3(unitAttack3),
@@ -388,7 +385,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc0),
-		.damageOut(damageOut),
+		.damageOut(unitAttack0),
 		.unitType(unitType0)
 	);
 	Unit unit1(
@@ -404,7 +401,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc1),
-		.damageOut(damageOut),
+		.damageOut(unitAttack1),
 		.unitType(unitType1)
 	);
 	Unit unit2(
@@ -420,7 +417,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc2),
-		.damageOut(damageOut),
+		.damageOut(unitAttack2),
 		.unitType(unitType2)
 	);
 	Unit unit3(
@@ -436,7 +433,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc3),
-		.damageOut(damageOut),
+		.damageOut(unitAttack3),
 		.unitType(unitType3)
 	);
 	Unit unit4(
@@ -452,7 +449,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc4),
-		.damageOut(damageOut),
+		.damageOut(unitAttack4),
 		.unitType(unitType4)
 	);
 	Unit unit5(
@@ -468,7 +465,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc5),
-		.damageOut(damageOut),
+		.damageOut(unitAttack5),
 		.unitType(unitType5)
 	);
 	Unit unit6(
@@ -484,7 +481,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc6),
-		.damageOut(damageOut),
+		.damageOut(unitAttack6),
 		.unitType(unitType6)
 	);
 	Unit unit7(
@@ -500,7 +497,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc7),
-		.damageOut(damageOut),
+		.damageOut(unitAttack7),
 		.unitType(unitType7)
 	);	
 	Unit unit8(
@@ -516,7 +513,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc8),
-		.damageOut(damageOut),
+		.damageOut(unitAttack8),
 		.unitType(unitType8)
 	);
 	Unit unit9(
@@ -532,7 +529,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc9),
-		.damageOut(damageOut),
+		.damageOut(unitAttack9),
 		.unitType(unitType9)
 	);
 	Unit unit10(
@@ -548,7 +545,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc10),
-		.damageOut(damageOut),
+		.damageOut(unitAttack10),
 		.unitType(unitType10)
 	);
 	Unit unit11(
@@ -564,7 +561,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc11),
-		.damageOut(damageOut),
+		.damageOut(unitAttack11),
 		.unitType(unitType11)
 	);
 	Unit unit12(
@@ -580,7 +577,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc12),
-		.damageOut(damageOut),
+		.damageOut(unitAttack12),
 		.unitType(unitType12)
 	);
 	Unit unit13(
@@ -596,7 +593,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc13),
-		.damageOut(damageOut),
+		.damageOut(unitAttack13),
 		.unitType(unitType13)
 	);
 	Unit unit14(
@@ -612,7 +609,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc14),
-		.damageOut(damageOut),
+		.damageOut(unitAttack14),
 		.unitType(unitType14)
 	);
 	Unit unit15(
@@ -628,7 +625,7 @@ module BattleCatsTop(
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc15),
-		.damageOut(damageOut),
+		.damageOut(unitAttack15),
 		.unitType(unitType15)
 	);	
 
@@ -643,7 +640,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc0),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack0),
 		.enemyType(enemyType0)
 	);
 	Enemy enemy1(
@@ -657,7 +654,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc1),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack1),
 		.enemyType(enemyType1)
 	);
 	Enemy enemy2(
@@ -671,7 +668,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc2),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack2),
 		.enemyType(enemyType2)
 	);
 	Enemy enemy3(
@@ -685,7 +682,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc3),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack3),
 		.enemyType(enemyType3)
 	);
 	Enemy enemy4(
@@ -699,7 +696,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc4),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack4),
 		.enemyType(enemyType4)
 	);
 	Enemy enemy5(
@@ -713,7 +710,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc5),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack5),
 		.enemyType(enemyType5)
 	);
 	Enemy enemy6(
@@ -727,7 +724,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc6),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack6),
 		.enemyType(enemyType6)
 	);
 	Enemy enemy7(
@@ -741,7 +738,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc7),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack7),
 		.enemyType(enemyType7)
 	);	
 	Enemy enemy8(
@@ -755,7 +752,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc8),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack8),
 		.enemyType(enemyType8)
 	);
 	Enemy enemy9(
@@ -769,7 +766,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc9),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack9),
 		.enemyType(enemyType9)
 	);
 	Enemy enemy10(
@@ -783,7 +780,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc10),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack10),
 		.enemyType(enemyType10)
 	);
 	Enemy enemy11(
@@ -797,7 +794,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc11),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack11),
 		.enemyType(enemyType11)
 	);
 	Enemy enemy12(
@@ -811,7 +808,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc12),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack12),
 		.enemyType(enemyType12)
 	);
 	Enemy enemy13(
@@ -825,7 +822,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc13),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack13),
 		.enemyType(enemyType13)
 	);
 	Enemy enemy14(
@@ -839,7 +836,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc14),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack14),
 		.enemyType(enemyType14)
 	);
 	Enemy enemy15(
@@ -853,7 +850,7 @@ module BattleCatsTop(
 		
 		.unitFront(friendlyFront),
 		.position(enemyLoc15),
-		.damageOut(damageOut),
+		.damageOut(enemyAttack15),
 		.enemyType(enemyType15)
 	);	
 
