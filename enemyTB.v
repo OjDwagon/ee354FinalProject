@@ -1,7 +1,6 @@
 `timescale 1ns/1ps
-// unitTB.v
 
-module unitTB;
+module enemyTB;
 
 	 // when you write testbenches, don't need inputs outputs, just registers to store the values in
 	
@@ -11,16 +10,13 @@ module unitTB;
 	reg	moveSCEN;
 	reg damageSCEN;
 	reg [7:0] damageIn;
-	reg [8:0] enemyFront;
-	reg SW1;
-	reg SW2;
-	reg SW3;
-	reg purchase;
+	reg [8:0] unitFront;
+	
 	
 	// Outputs
 	wire [8:0] position;
 	wire [7:0] damageOut;
-	wire [1:0] unitType;
+	wire [1:0] enemyType;
 	reg [9*8:0] state_string; // state strings are all 9 characters long
 
 	wire q_I;
@@ -35,21 +31,17 @@ module unitTB;
 	integer file_descriptor_ID;
 
 	// Module instantiation
-	Unit uut(
+	Enemy uut(
 		.clk(clk),
 		.reset(reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(damageIn),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
-		.purchase(purchase),
-		.enemyFront(enemyFront),
+		.unitFront(unitFront),
 		
 		.position(position),
 		.damageOut(damageOut),
-		.unitType(unitType),
+		.enemyType(enemyType),
 		
 		// state outputs
 		.q_I(q_I),
@@ -99,47 +91,25 @@ module unitTB;
 		
 		$display("Type 1 test");
 		$fdisplay(file_descriptor_ID, "Type 1 test");
-		APPLY_STIMULUS(1'b1, 1'b0, 1'b0); // type 1 test
+		APPLY_STIMULUS(); // type 1 test
 		
-		$display("");
-		$display("");
-		
-		$display("Type 2 test");
-		$fdisplay(file_descriptor_ID, "Type 2 test");
-		APPLY_STIMULUS(1'b0, 1'b1, 1'b0); // type 2 test
-		
-		$display("");
-		$display("");
-		
-		$display("Type 3 test");
-		$fdisplay(file_descriptor_ID, "Type 3 test");
-		APPLY_STIMULUS(1'b0, 1'b0, 1'b1); // type 3 test
 	
 	end
 
 	task APPLY_STIMULUS;
-		input SW1_in, SW2_in, SW3_in;
 		begin
-			SW1 = SW1_in;
-			SW2 = SW2_in;
-			SW3 = SW3_in;
-			enemyFront = 9'b0000_0000_0;
+			unitFront = 9'b1111_1111_1;
 			
-			@(posedge clk);
-			#1
-			purchase = 1'b1; // apply stimulus after clock edge
-			#4 // read towards the middle of the clock
+			#5 // read towards the middle of the clock
 			$display("State: %s", state_string); // In INIT
-			$display("Unit Type ID: %d", unitType); // unit should be 0
-			$fdisplay(file_descriptor_ID, "Unit Type ID: %d", unitType); // type of unit should still be 0
+			$display("Enemy Type ID: %d", enemyType); // unit should be 0
+			$fdisplay(file_descriptor_ID, "Enemy Type ID: %d", enemyType); // type of unit should still be 0
 			
 			@(posedge clk);
-			#1
-			purchase = 1'b0;
-			#4 // read towards the middle of the clock
+			#5 // read towards the middle of the clock
 			$display("State: %s", state_string); // In DEPLOY
-			$display("Unit Type ID: %d", unitType); // type should still be 0, gets turned into corresponding type after next clock)
-			$fdisplay(file_descriptor_ID, "Unit Type ID: %d", unitType);
+			$display("Enemy Type ID: %d", enemyType); // type should still be 0, gets turned into corresponding type after next clock)
+			$fdisplay(file_descriptor_ID, "Enemy Type ID: %d", enemyType);
 			
 			@(posedge clk);
 			$display("Move test");
@@ -147,24 +117,24 @@ module unitTB;
 			moveSCEN = 1;
 			#4
 			$display("State: %s", state_string); // In ALIVE 
-			$display("Unit Type ID: %d", unitType); // type should now be corresponding type
-			$fdisplay(file_descriptor_ID, "Unit Type ID: %d", unitType);
+			$display("Enemy Type ID: %d", enemyType); // type should now be corresponding type
+			$fdisplay(file_descriptor_ID, "Enemy Type ID: %d", enemyType);
 			$display("Old position: %d", position); // should be at the end of the field 512
 			
 			
 			@(posedge clk);
 			$display("Moving battlefront");
 			#1
-			enemyFront = 9'b1111_1111_0; // moving battle front so that unit should not be able to move, should now attack
+			unitFront = 9'b0000_0000_1; // moving battle front so that unit should not be able to move, should now attack
 			#4
 			$display("New position: %d", position); // should be updated
 			$display("Damage out: %d", damageOut);
 			
 			@(posedge clk);
 			#5
-			$display("Enemy front: %d", enemyFront); // should be 510
+			$display("Unit front: %d", unitFront); // should be 510
 			$display("New position: %d", position); // should be the same
-			$display("New Damage out: %d", damageOut); // now the unit should be outputting damage
+			$display("New Damage out: %d", damageOut); // should now be updated
 			
 			@(posedge clk);
 			$display("Attack in test");
@@ -178,7 +148,7 @@ module unitTB;
 			
 			@(posedge clk);
 			#1
-			damageIn = 8'b1000_0000; // should kill unit
+			damageIn = 8'b1000_0000; // should kill enemy
 			#4
 			$display("Health after attack: %d", health);
 			$display("Damage to be applied: %d", damageIn);			
@@ -190,7 +160,7 @@ module unitTB;
 			#4
 			$display("Back to Init State");
 			$display("State: %s", state_string);
-			$display("Unit Type ID: %d", unitType);
+			$display("Enemy Type ID: %d", enemyType);
 			
 			
 		end
