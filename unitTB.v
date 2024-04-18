@@ -100,12 +100,20 @@ module unitTB;
 		$display("Type 1 test");
 		$fdisplay(file_descriptor_ID, "Type 1 test");
 		APPLY_STIMULUS(1'b1, 1'b0, 1'b0); // type 1 test
-		/*$display("Type 2 test");
+		
+		$display("");
+		$display("");
+		
+		$display("Type 2 test");
 		$fdisplay(file_descriptor_ID, "Type 2 test");
 		APPLY_STIMULUS(1'b0, 1'b1, 1'b0); // type 2 test
+		
+		$display("");
+		$display("");
+		
 		$display("Type 3 test");
 		$fdisplay(file_descriptor_ID, "Type 3 test");
-		APPLY_STIMULUS(1'b0, 1'b0, 1'b1); // type 3 test*/
+		APPLY_STIMULUS(1'b0, 1'b0, 1'b1); // type 3 test
 	
 	end
 
@@ -115,6 +123,7 @@ module unitTB;
 			SW1 = SW1_in;
 			SW2 = SW2_in;
 			SW3 = SW3_in;
+			enemyFront = 9'b0000_0000_0;
 			
 			@(posedge clk);
 			#1
@@ -133,6 +142,7 @@ module unitTB;
 			$fdisplay(file_descriptor_ID, "Unit Type ID: %d", unitType);
 			
 			@(posedge clk);
+			$display("Move test");
 			#1
 			moveSCEN = 1;
 			#4
@@ -143,22 +153,30 @@ module unitTB;
 			
 			
 			@(posedge clk);
-			$display("Move test");
-			
+			$display("Moving battlefront");
 			#1
-			damageSCEN = 1;
-			moveSCEN = 0;
-			damageIn = 8'b1000_0000;
+			enemyFront = 9'b1111_1111_0; // moving battle front so that unit should not be able to move, should now attack
 			#4
 			$display("New position: %d", position); // should be updated
-			$display("Health before attack: %d", health);
-			$display("Damage to be applied: %d", damageIn);
+			
+			@(posedge clk);
+			#5
+			$display("Enemy front: %d", enemyFront); // should be 510
+			$display("New position: %d", position); // should be the same
+			$display("Damage out: %d", damageOut);
 			
 			@(posedge clk);
 			$display("Attack test");
 			#1
 			moveSCEN = 0;
 			damageSCEN = 1;
+			damageIn = 8'b1000_0000;
+			#4
+			$display("Health before attack: %d", health);
+			$display("Damage to be applied: %d", damageIn);
+			
+			@(posedge clk);
+			#1
 			damageIn = 8'b1000_0000; // should kill enemy
 			#4
 			$display("Health after attack: %d", health);
