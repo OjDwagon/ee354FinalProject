@@ -22,27 +22,28 @@ module Unit(
 	output reg [8:0] position, // choose how many bits we need for position
 	output reg [7:0] damageOut, // choose how many bits we need for damage
 	
-	output reg [1:0] unitType,// 00 dead, 1-3 different unit types
+	output reg [1:0] unitType// 00 dead, 1-3 different unit types
 	
-	output q_I,
+	// These outputs are for running testbenches, have an uncommented version of this in another file
+	/*output q_I,
 	output q_Deploy1,
 	output q_Deploy2,
 	output q_Deploy3,
 	output q_Alive,
 	
-	output reg [7:0] health
+	output reg [7:0] health*/
 	
 	// output dead
 
 );
 
 reg [7:0] power; // determines how strong an enemy's attack is
-//reg [7:0] health; // internal to the unit, keeps track how much health they have left
+reg [7:0] health; // internal to the unit, keeps track how much health they have left
 //reg [3:0] I; // dummy counter for dead state
 
 reg [4:0] state;
 
-assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
+// assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
 localparam
 	QI =       5'b10000,

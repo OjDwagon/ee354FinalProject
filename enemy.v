@@ -14,13 +14,13 @@ module Enemy(
 	output reg [8:0] position, // choose how many bits we need for position
 	output reg [7:0] damageOut, // choose how many bits we need for damage
 	
-	output reg [1:0] enemyType,
+	output reg [1:0] enemyType
 	
-	output q_I,
+	/*output q_I,
 	output q_Deploy1,
 	output q_Deploy2,
 	output q_Deploy3,
-	output q_Alive
+	output q_Alive*/
 	
 	//output dead
 );
@@ -30,7 +30,7 @@ reg [7:0] health; // internal to the unit, keeps track how much health they have
 //reg [3:0] I; // dummy counter for dead state
 
 reg [6:0] state;
-assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
+//assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
 localparam
 	QI =       5'b10000,

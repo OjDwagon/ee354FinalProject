@@ -28,9 +28,9 @@ module BattleCatsTop(
 	input BtnR,
 	input BtnL,
 	input BtnD,
-	input SW1,
-	input SW2,
-	input SW3,
+	input Sw1,
+	input Sw2, // these need to be Sw instead of SW
+	input Sw3,
 	//VGA signal
 	output hSync, vSync,
 	output [3:0] vgaR, vgaG, vgaB,
@@ -377,14 +377,14 @@ module BattleCatsTop(
    
 	Unit unit0(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage0),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc0),
@@ -393,14 +393,14 @@ module BattleCatsTop(
 	);
 	Unit unit1(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage1),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc1),
@@ -409,14 +409,14 @@ module BattleCatsTop(
 	);
 	Unit unit2(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage2),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc2),
@@ -425,14 +425,14 @@ module BattleCatsTop(
 	);
 	Unit unit3(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage3),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc3),
@@ -441,14 +441,14 @@ module BattleCatsTop(
 	);
 	Unit unit4(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage4),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc4),
@@ -457,14 +457,14 @@ module BattleCatsTop(
 	);
 	Unit unit5(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage5),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc5),
@@ -473,14 +473,14 @@ module BattleCatsTop(
 	);
 	Unit unit6(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage6),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc6),
@@ -489,14 +489,14 @@ module BattleCatsTop(
 	);
 	Unit unit7(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage7),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc7),
@@ -505,14 +505,14 @@ module BattleCatsTop(
 	);	
 	Unit unit8(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage8),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc8),
@@ -521,14 +521,14 @@ module BattleCatsTop(
 	);
 	Unit unit9(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage9),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc9),
@@ -537,14 +537,14 @@ module BattleCatsTop(
 	);
 	Unit unit10(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage10),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc10),
@@ -553,14 +553,14 @@ module BattleCatsTop(
 	);
 	Unit unit11(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage11),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc11),
@@ -569,14 +569,14 @@ module BattleCatsTop(
 	);
 	Unit unit12(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage12),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc12),
@@ -585,14 +585,14 @@ module BattleCatsTop(
 	);
 	Unit unit13(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage13),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc13),
@@ -601,14 +601,14 @@ module BattleCatsTop(
 	);
 	Unit unit14(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage14),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc14),
@@ -617,14 +617,14 @@ module BattleCatsTop(
 	);
 	Unit unit15(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage15),
-		.SW1(SW1),
-		.SW2(SW2),
-		.SW3(SW3),
+		.SW1(Sw1),
+		.SW2(Sw2),
+		.SW3(Sw3),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc15),
@@ -634,7 +634,7 @@ module BattleCatsTop(
 
 	Enemy enemy0(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -648,7 +648,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy1(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -662,7 +662,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy2(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -676,7 +676,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy3(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -690,7 +690,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy4(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -704,7 +704,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy5(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -718,7 +718,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy6(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -732,7 +732,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy7(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -746,7 +746,7 @@ module BattleCatsTop(
 	);	
 	Enemy enemy8(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -760,7 +760,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy9(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -774,7 +774,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy10(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -788,7 +788,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy11(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -802,7 +802,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy12(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -816,7 +816,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy13(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -830,7 +830,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy14(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -844,7 +844,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy15(
 		.clk(ClkPort), 
-		.gameClk(gameSCEN),
+		//.gameClk(gameSCEN),
 		.reset(rst),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
