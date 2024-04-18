@@ -2,7 +2,7 @@
 
 module Unit(
 	input clk, 
-	input gameClk,
+	//input gameClk,
 	input reset,
 	
 	input moveSCEN,
@@ -22,27 +22,37 @@ module Unit(
 	output reg [8:0] position, // choose how many bits we need for position
 	output reg [7:0] damageOut, // choose how many bits we need for damage
 	
-	output reg [1:0] unitType // 00 dead, 1-3 different unit types
+	output reg [1:0] unitType,// 00 dead, 1-3 different unit types
+	
+	output q_I,
+	output q_Deploy1,
+	output q_Deploy2,
+	output q_Deploy3,
+	output q_Alive,
+	
+	output reg [7:0] health
 	
 	// output dead
 
 );
 
 reg [7:0] power; // determines how strong an enemy's attack is
-reg [7:0] health; // internal to the unit, keeps track how much health they have left
+//reg [7:0] health; // internal to the unit, keeps track how much health they have left
 //reg [3:0] I; // dummy counter for dead state
 
-reg [6:0] state;
+reg [4:0] state;
+
+assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
 localparam
-	QI =       7'b1000000,
+	QI =       5'b10000,
 	//QDeploy0 = 7'b0100000,
-	QDeploy1 = 7'b0010000,
-	QDeploy2 = 7'b0001000,
-	QDeploy3 = 7'b0000100,
-	QAlive   = 7'b0000010,
+	QDeploy1 = 5'b01000,
+	QDeploy2 = 5'b00100,
+	QDeploy3 = 5'b00010,
+	QAlive   = 5'b00001,
 //	QDead =    7'b0000001,
-	UNK =      7'bXXXXXXX;
+	UNK =      5'bXXXXX;
 
 always@(posedge clk, posedge reset) // might have to the change this from clk to gameClk later
 begin
@@ -54,6 +64,8 @@ begin
 			QI:
 				begin
 					// state transition
+					unitType <= 2'b00;
+					
 					if(purchase)
 					begin
 						case({SW1, SW2, SW3})
@@ -78,18 +90,21 @@ begin
 				end*/
 			QDeploy1:
 				begin
+					state <= QAlive;
 					health <= 8'b1111_1111;
 					power <= 8'b0010_0000;
 					unitType <= 2'b01;
 				end
 			QDeploy2:
 				begin
+					state <= QAlive;
 					health <= 8'b1111_1111;
 					power <= 8'b0100_0000;
 					unitType <= 2'b10;
 				end
 			QDeploy3:
 				begin
+					state <= QAlive;
 					health <= 8'b1111_1111;
 					power <= 8'b1000_0000; 
 					unitType <= 2'b11;
@@ -100,9 +115,8 @@ begin
 					if(health <= damageIn)
 					begin
 					state <= QI;
-					unitType <= 2'b00; // makes the enemy Dead
+					unitType <= 2'b00;
 					end
-					
 					// RTL
 					
 					// accept damage provided by TOP, can be 0 to whatever the attack damage is of enemy units
