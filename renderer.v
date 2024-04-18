@@ -83,7 +83,7 @@ module renderer(
             registeredUnitLoc12, registeredUnitLoc13, registeredUnitLoc14, 
             registeredUnitLoc15;
 			
-	reg [8:0] registeredUnitType0, registeredUnitType1, registeredUnitType2,
+	reg [1:0] registeredUnitType0, registeredUnitType1, registeredUnitType2,
 		registeredUnitType3, registeredUnitType4, registeredUnitType5,
 		registeredUnitType6, registeredUnitType7, registeredUnitType8, 
 		registeredUnitType9, registeredUnitType10, registeredUnitType11, 
@@ -97,7 +97,7 @@ module renderer(
             registeredEnemyLoc12, registeredEnemyLoc13, registeredEnemyLoc14, 
             registeredEnemyLoc15;
 			
-	reg [8:0] registeredEnemyType0, registeredEnemyType1, registeredEnemyType2,
+	reg [1:0] registeredEnemyType0, registeredEnemyType1, registeredEnemyType2,
 		registeredEnemyType3, registeredEnemyType4, registeredEnemyType5,
 		registeredEnemyType6, registeredEnemyType7, registeredEnemyType8, 
 		registeredEnemyType9, registeredEnemyType10, registeredEnemyType11, 
@@ -105,72 +105,75 @@ module renderer(
 		registeredEnemyType15;
 	
 	// Capture the new unit positions and types only when given gameSCEN
-	always @(posedge gameSCEN)
+	always @(posedge clk)
 	begin
-		registeredUnitLoc0 <= unitLoc0;
-		registeredUnitLoc1 <= unitLoc1;
-		registeredUnitLoc2 <= unitLoc2;
-		registeredUnitLoc3 <= unitLoc3;
-		registeredUnitLoc4 <= unitLoc4;
-		registeredUnitLoc5 <= unitLoc5;
-		registeredUnitLoc6 <= unitLoc6;
-		registeredUnitLoc7 <= unitLoc7;
-		registeredUnitLoc8 <= unitLoc8;
-		registeredUnitLoc9 <= unitLoc9;
-		registeredUnitLoc10 <= unitLoc10;
-		registeredUnitLoc11 <= unitLoc11;
-		registeredUnitLoc12 <= unitLoc12;
-		registeredUnitLoc13 <= unitLoc13;
-		registeredUnitLoc14 <= unitLoc14;
-		registeredUnitLoc15 <= unitLoc15;
-		registeredUnitType0 <= unitType0;
-		registeredUnitType1 <= unitType1;
-		registeredUnitType2 <= unitType2;
-		registeredUnitType3 <= unitType3;
-		registeredUnitType4 <= unitType4;
-		registeredUnitType5 <= unitType5;
-		registeredUnitType6 <= unitType6;
-		registeredUnitType7 <= unitType7;
-		registeredUnitType8 <= unitType8;
-		registeredUnitType9 <= unitType9;
-		registeredUnitType10 <= unitType10;
-		registeredUnitType11 <= unitType11;
-		registeredUnitType12 <= unitType12;
-		registeredUnitType13 <= unitType13;
-		registeredUnitType14 <= unitType14;
-		registeredUnitType15 <= unitType15;
-		registeredEnemyLoc0 <= enemyLoc0;
-		registeredEnemyLoc1 <= enemyLoc1;
-		registeredEnemyLoc2 <= enemyLoc2;
-		registeredEnemyLoc3 <= enemyLoc3;
-		registeredEnemyLoc4 <= enemyLoc4;
-		registeredEnemyLoc5 <= enemyLoc5;
-		registeredEnemyLoc6 <= enemyLoc6;
-		registeredEnemyLoc7 <= enemyLoc7;
-		registeredEnemyLoc8 <= enemyLoc8;
-		registeredEnemyLoc9 <= enemyLoc9;
-		registeredEnemyLoc10 <= enemyLoc10;
-		registeredEnemyLoc11 <= enemyLoc11;
-		registeredEnemyLoc12 <= enemyLoc12;
-		registeredEnemyLoc13 <= enemyLoc13;
-		registeredEnemyLoc14 <= enemyLoc14;
-		registeredEnemyLoc15 <= enemyLoc15;
-		registeredEnemyType0 <= enemyType0;
-		registeredEnemyType1 <= enemyType1;
-		registeredEnemyType2 <= enemyType2;
-		registeredEnemyType3 <= enemyType3;
-		registeredEnemyType4 <= enemyType4;
-		registeredEnemyType5 <= enemyType5;
-		registeredEnemyType6 <= enemyType6;
-		registeredEnemyType7 <= enemyType7;
-		registeredEnemyType8 <= enemyType8;
-		registeredEnemyType9 <= enemyType9;
-		registeredEnemyType10 <= enemyType10;
-		registeredEnemyType11 <= enemyType11;
-		registeredEnemyType12 <= enemyType12;
-		registeredEnemyType13 <= enemyType13;
-		registeredEnemyType14 <= enemyType14;
-		registeredEnemyType15 <= enemyType15;
+		if(gameSCEN)
+		begin
+			registeredUnitLoc0 <= unitLoc0;
+			registeredUnitLoc1 <= unitLoc1;
+			registeredUnitLoc2 <= unitLoc2;
+			registeredUnitLoc3 <= unitLoc3;
+			registeredUnitLoc4 <= unitLoc4;
+			registeredUnitLoc5 <= unitLoc5;
+			registeredUnitLoc6 <= unitLoc6;
+			registeredUnitLoc7 <= unitLoc7;
+			registeredUnitLoc8 <= unitLoc8;
+			registeredUnitLoc9 <= unitLoc9;
+			registeredUnitLoc10 <= unitLoc10;
+			registeredUnitLoc11 <= unitLoc11;
+			registeredUnitLoc12 <= unitLoc12;
+			registeredUnitLoc13 <= unitLoc13;
+			registeredUnitLoc14 <= unitLoc14;
+			registeredUnitLoc15 <= unitLoc15;
+			registeredUnitType0 <= unitType0;
+			registeredUnitType1 <= unitType1;
+			registeredUnitType2 <= unitType2;
+			registeredUnitType3 <= unitType3;
+			registeredUnitType4 <= unitType4;
+			registeredUnitType5 <= unitType5;
+			registeredUnitType6 <= unitType6;
+			registeredUnitType7 <= unitType7;
+			registeredUnitType8 <= unitType8;
+			registeredUnitType9 <= unitType9;
+			registeredUnitType10 <= unitType10;
+			registeredUnitType11 <= unitType11;
+			registeredUnitType12 <= unitType12;
+			registeredUnitType13 <= unitType13;
+			registeredUnitType14 <= unitType14;
+			registeredUnitType15 <= unitType15;
+			registeredEnemyLoc0 <= enemyLoc0;
+			registeredEnemyLoc1 <= enemyLoc1;
+			registeredEnemyLoc2 <= enemyLoc2;
+			registeredEnemyLoc3 <= enemyLoc3;
+			registeredEnemyLoc4 <= enemyLoc4;
+			registeredEnemyLoc5 <= enemyLoc5;
+			registeredEnemyLoc6 <= enemyLoc6;
+			registeredEnemyLoc7 <= enemyLoc7;
+			registeredEnemyLoc8 <= enemyLoc8;
+			registeredEnemyLoc9 <= enemyLoc9;
+			registeredEnemyLoc10 <= enemyLoc10;
+			registeredEnemyLoc11 <= enemyLoc11;
+			registeredEnemyLoc12 <= enemyLoc12;
+			registeredEnemyLoc13 <= enemyLoc13;
+			registeredEnemyLoc14 <= enemyLoc14;
+			registeredEnemyLoc15 <= enemyLoc15;
+			registeredEnemyType0 <= enemyType0;
+			registeredEnemyType1 <= enemyType1;
+			registeredEnemyType2 <= enemyType2;
+			registeredEnemyType3 <= enemyType3;
+			registeredEnemyType4 <= enemyType4;
+			registeredEnemyType5 <= enemyType5;
+			registeredEnemyType6 <= enemyType6;
+			registeredEnemyType7 <= enemyType7;
+			registeredEnemyType8 <= enemyType8;
+			registeredEnemyType9 <= enemyType9;
+			registeredEnemyType10 <= enemyType10;
+			registeredEnemyType11 <= enemyType11;
+			registeredEnemyType12 <= enemyType12;
+			registeredEnemyType13 <= enemyType13;
+			registeredEnemyType14 <= enemyType14;
+			registeredEnemyType15 <= enemyType15;
+		end
 	end
 
 	parameter UNIT1COLOR = 12'b1111_0000_0000; // Red

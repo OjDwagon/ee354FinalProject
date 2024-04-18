@@ -49,7 +49,7 @@ module BattleCatsTop(
 	wire up,down,left,right;
 	wire [3:0] anode;
 	wire [11:0] rgb;
-	wire rst; // should this be edited
+	// wire rst; // should this be edited ------------------------------------------------------
 	
 	reg [3:0]	SSD;
 	wire [3:0]	SSD3, SSD2, SSD1, SSD0;
@@ -134,10 +134,20 @@ module BattleCatsTop(
 	enemyType8, enemyType9, enemyType10, enemyType11, enemyType12,
 	enemyType13, enemyType14, enemyType15;
 	
-	GameEngine engine(.clk(ClkPort), .rst(rst), .gameSCEN(gameSCEN));
+	reg [8:0] fakeUnitLoc0;
+	
+	assign @(posedge gameSCEN)
+	begin
+		if(Reset) fakeUnitLoc0 <= 9'b1111_1111_1;
+		else fakeUnitLoc0 <= fakeUnitLoc0 + 1;
+	
+	end
+	
+	
+	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
 	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
-	.unitLoc0(unitLoc0),
+	.unitLoc0(fakeUnitLoc0),
 	.unitLoc1(unitLoc1),
 	.unitLoc2(unitLoc2),
 	.unitLoc3(unitLoc3),
@@ -204,7 +214,7 @@ module BattleCatsTop(
 	
 
 	TopCore core(.clk(ClkPort),
-	.reset(rst),
+	.reset(Reset),
 	.damageCalcDone(damageCalcDone), 
 	.battlefrontDone(battlefrontDone), 
 	.gameSCEN(gameSEN), 
@@ -216,7 +226,7 @@ module BattleCatsTop(
 	
 	BattleFront battlefrontCalc(	
 	.clk(ClkPort),
-	.rst(rst),
+	.rst(Reset),
 	.Start(gameSCEN),
 	.Ack(battlefrontACK),
 	.unitLoc0(unitLoc0),
@@ -332,7 +342,7 @@ module BattleCatsTop(
 	
 	DamageCalc damageCalc(
 		.clk(ClkPort),
-		.rst(rst),
+		.rst(Reset),
 		.Start(damageSCEN),
 		.Ack(damageCalcACK),
 		.unitAttack0(unitAttack0), 
@@ -375,7 +385,7 @@ module BattleCatsTop(
 	Unit unit0(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage0),
@@ -391,7 +401,7 @@ module BattleCatsTop(
 	Unit unit1(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage1),
@@ -407,7 +417,7 @@ module BattleCatsTop(
 	Unit unit2(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage2),
@@ -423,7 +433,7 @@ module BattleCatsTop(
 	Unit unit3(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage3),
@@ -439,7 +449,7 @@ module BattleCatsTop(
 	Unit unit4(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage4),
@@ -455,7 +465,7 @@ module BattleCatsTop(
 	Unit unit5(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage5),
@@ -471,7 +481,7 @@ module BattleCatsTop(
 	Unit unit6(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage6),
@@ -487,7 +497,7 @@ module BattleCatsTop(
 	Unit unit7(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage7),
@@ -503,7 +513,7 @@ module BattleCatsTop(
 	Unit unit8(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage8),
@@ -519,7 +529,7 @@ module BattleCatsTop(
 	Unit unit9(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage9),
@@ -535,7 +545,7 @@ module BattleCatsTop(
 	Unit unit10(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage10),
@@ -551,7 +561,7 @@ module BattleCatsTop(
 	Unit unit11(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage11),
@@ -567,7 +577,7 @@ module BattleCatsTop(
 	Unit unit12(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage12),
@@ -583,7 +593,7 @@ module BattleCatsTop(
 	Unit unit13(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage13),
@@ -599,7 +609,7 @@ module BattleCatsTop(
 	Unit unit14(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage14),
@@ -615,7 +625,7 @@ module BattleCatsTop(
 	Unit unit15(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage15),
@@ -632,7 +642,7 @@ module BattleCatsTop(
 	Enemy enemy0(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage0),
@@ -646,7 +656,7 @@ module BattleCatsTop(
 	Enemy enemy1(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage1),
@@ -660,7 +670,7 @@ module BattleCatsTop(
 	Enemy enemy2(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage2),
@@ -674,7 +684,7 @@ module BattleCatsTop(
 	Enemy enemy3(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage3),
@@ -688,7 +698,7 @@ module BattleCatsTop(
 	Enemy enemy4(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage4),
@@ -702,7 +712,7 @@ module BattleCatsTop(
 	Enemy enemy5(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage5),
@@ -716,7 +726,7 @@ module BattleCatsTop(
 	Enemy enemy6(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage6),
@@ -730,7 +740,7 @@ module BattleCatsTop(
 	Enemy enemy7(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage7),
@@ -744,7 +754,7 @@ module BattleCatsTop(
 	Enemy enemy8(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage8),
@@ -758,7 +768,7 @@ module BattleCatsTop(
 	Enemy enemy9(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage9),
@@ -772,7 +782,7 @@ module BattleCatsTop(
 	Enemy enemy10(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage10),
@@ -786,7 +796,7 @@ module BattleCatsTop(
 	Enemy enemy11(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage11),
@@ -800,7 +810,7 @@ module BattleCatsTop(
 	Enemy enemy12(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage12),
@@ -814,7 +824,7 @@ module BattleCatsTop(
 	Enemy enemy13(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage13),
@@ -828,7 +838,7 @@ module BattleCatsTop(
 	Enemy enemy14(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage14),
@@ -842,7 +852,7 @@ module BattleCatsTop(
 	Enemy enemy15(
 		.clk(ClkPort), 
 		//.gameClk(gameSCEN),
-		.reset(rst),
+		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage15),
