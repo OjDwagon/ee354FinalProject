@@ -47,7 +47,7 @@ module BattleCatsTop(
 	wire[9:0] hc, vc;
 	wire[15:0] score;
 	wire up,down,left,right;
-	wire [3:0] anode;
+	//wire [3:0] anode;
 	wire [11:0] rgb;
 	// wire rst; // should this be edited ------------------------------------------------------
 	
@@ -134,17 +134,51 @@ module BattleCatsTop(
 	enemyType8, enemyType9, enemyType10, enemyType11, enemyType12,
 	enemyType13, enemyType14, enemyType15;
 	
-	reg [8:0] fakeUnitLoc0;
+	/*reg [8:0] fakeUnitLoc0;
 	
 	always @(posedge gameSCEN)
 	begin
 		if(Reset) fakeUnitLoc0 <= 9'b1111_1111_1;
 		else fakeUnitLoc0 <= fakeUnitLoc0 + 1;
 	
+	end*/
+	
+	// Debouncer SCEN signals
+	wire pauseSCEN;
+	wire leftSCEN;
+	wire rightSCEN;
+	wire downSCEN;
+	
+	// the #(.N_dc(25)) part sets values for parameters inside the module definition for the debouncer.
+	// separater from input/output wiring!
+	ee201_debouncer #(.N_dc(25)) pause_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnU), .DPB(), .SCEN(pauseSCEN), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) left_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnL), .DPB(), .SCEN(leftSCEN), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) right_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(rightSCEN), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) down_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(downSCEN), .MCEN(), .CCEN());
+	
+	reg [15:0] money_counter;
+	
+	always@(posedge DIV_CLK[22], posedge Reset)
+	begin : MONEY_COUNTER
+		if(Reset) money_counter <= 0;
+		else
+		begin
+		if(money_counter != 16'b1111_1111_1111) // stop incrementing when we reach the top
+			money_counter <= money_counter + 1'b1;
+		if(rightSCEN || leftSCEN || downSCEN)
+			money_counter <= money_counter - 16'b0000_0010_0000;
+		end
 	end
 	
+	wire [6:0] ssdOut;
+	wire [3:0] anode;
+	counter cnt(.clk(ClkPort), .displayNumber(money_counter), .anode(anode), .ssdOut(ssdOut));
 	
-	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN));
+	assign Dp = 1;
+	assign {Ca, Cb, Cc, Cd, Ce, Cf, Cg} = ssdOut[6 : 0];
+    assign {An7, An6, An5, An4, An3, An2, An1, An0} = {4'b1111, anode};
+	
+	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN), .debouncedBtnU(pauseSCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
 	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
 	.unitLoc0(unitLoc0),
@@ -389,9 +423,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage0),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc0),
@@ -405,9 +439,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage1),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc1),
@@ -421,9 +455,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage2),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc2),
@@ -437,9 +471,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage3),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc3),
@@ -453,9 +487,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage4),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc4),
@@ -469,9 +503,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage5),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc5),
@@ -485,9 +519,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage6),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc6),
@@ -501,9 +535,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage7),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc7),
@@ -517,9 +551,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage8),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc8),
@@ -533,9 +567,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage9),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc9),
@@ -549,9 +583,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage10),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc10),
@@ -565,9 +599,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage11),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc11),
@@ -581,9 +615,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage12),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc12),
@@ -597,9 +631,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage13),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc13),
@@ -613,9 +647,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage14),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc14),
@@ -629,9 +663,9 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage15),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
 		.purchase(purchase),
 		.enemyFront(enemyFront),
 		.position(unitLoc15),
@@ -906,6 +940,7 @@ module BattleCatsTop(
 	//  DIV_CLK[19]       |___________|           |___________|
 	//
 
+/*
 	assign ssdscan_clk = DIV_CLK[19:18];
 	assign An0	= !(~(ssdscan_clk[1]) && ~(ssdscan_clk[0]));  // when ssdscan_clk = 00
 	assign An1	= !(~(ssdscan_clk[1]) &&  (ssdscan_clk[0]));  // when ssdscan_clk = 01
@@ -951,5 +986,7 @@ module BattleCatsTop(
 	
 	// reg [7:0]  SSD_CATHODES;
 	assign {Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp} = {SSD_CATHODES};
+	
+*/
 
 endmodule

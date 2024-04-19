@@ -10,10 +10,14 @@ module Unit(
 	
 	input [7:0] damageIn,
 	
-	//input SW0,
+	/*input SW0,
 	input SW1,
 	input SW2,
-	input SW3,
+	input SW3,*/
+	
+	input leftSCEN,
+	input rightSCEN,
+	input downSCEN,
 	
 	input purchase,
 	
@@ -43,6 +47,8 @@ reg [7:0] health; // internal to the unit, keeps track how much health they have
 
 reg [4:0] state;
 
+reg [3:0] counter;
+
 // assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
 localparam
@@ -67,15 +73,20 @@ begin
 					// state transition
 					unitType <= 2'b00;
 					
-					if(purchase)
+					//if(counter == 4'b1111) 
 					begin
-						case({SW1, SW2, SW3})
-							//4'b1000: state <= QDeploy0;
-							3'b100: state <= QDeploy1;
-							3'b010: state <= QDeploy2;
-							3'b001: state <= QDeploy3;
-						endcase
+						if(purchase)
+						begin
+							case({leftSCEN, rightSCEN, downSCEN})
+								//4'b1000: state <= QDeploy0;
+								3'b100: state <= QDeploy1;
+								3'b010: state <= QDeploy2;
+								3'b001: state <= QDeploy3;
+							endcase
+						end
 					end
+					
+					//else counter <= counter + 4'b0001;
 			
 					// RTL
 					position <= 9'b1111_1111_1;
@@ -117,6 +128,7 @@ begin
 					begin
 					state <= QI;
 					unitType <= 2'b00;
+					counter <= 4'b0000;
 					end
 					// RTL
 					

@@ -46,10 +46,10 @@ module DamageDecoder(
 	
 	always @(*)
 	begin
-		if(totalUnitDamage >= 12'b0001_0000_0000) scaledUnitDamage <= 8'b1111_1111_1111;
+		if(totalUnitDamage >= 12'b0001_0000_0000) scaledUnitDamage <= 8'b1111_1111;
 		else scaledUnitDamage <= totalUnitDamage[7:0];
 		
-		if(totalEnemyDamage >= 12'b0001_0000_0000) scaledEnemyDamage <= 8'b1111_1111_1111;
+		if(totalEnemyDamage >= 12'b0001_0000_0000) scaledEnemyDamage <= 8'b1111_1111;
 		else scaledEnemyDamage <= totalEnemyDamage[7:0];
 	end
 	

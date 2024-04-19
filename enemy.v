@@ -32,6 +32,8 @@ reg [7:0] health; // internal to the unit, keeps track how much health they have
 reg [6:0] state;
 //assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
+reg [15:0] counter;
+
 localparam
 	QI =       5'b10000,
 	//QDeploy0 = 7'b0100000,
@@ -60,8 +62,8 @@ begin
 					//	4'b0001: state <= QDeploy3;
 					endcase*/
 					
-					state <= QDeploy1; // making all enemies type 1 for now
-			
+					if(counter == 16'b1111_1111_1111) state <= QDeploy1; // making all enemies type 1 for now
+					counter <= counter + 4'b0001;
 					// RTL
 					position <= 9'b0000_0000_0; // CHANGED FROM PLAYER
 					//I <= 3'b000;
@@ -103,6 +105,7 @@ begin
 					begin
 					state <= QI;
 					enemyType <= 2'b00;
+					
 					end
 					// RTL
 					

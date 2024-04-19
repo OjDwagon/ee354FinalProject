@@ -11,7 +11,7 @@ module GameEngine(
    );
 	
 	reg [19:0] counter;
-	reg [2:0] state;
+	reg [1:0] state;
 	
 	localparam
 	WAIT	= 2'b10,
@@ -37,13 +37,13 @@ module GameEngine(
 				end
 				
 				ADVANCE:
-				begin
-					if(debouncedBtnU)
+				//begin
+					//if(debouncedBtnU)
 					begin
 						state <= WAIT;
 						counter <= counter + 1;
 					end
-				end
+				//end
 				default:
 				begin
 					state <= 2'bXX;
