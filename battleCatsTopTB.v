@@ -33,14 +33,15 @@ module BattleCatsTopTB;
 	wire bright;
 	wire[9:0] hc, vc;
 	wire [11:0] rgb;
+	integer gameTickClock;
 	// wire rst; // should this be edited ------------------------------------------------------
 	
 	assign bright = 1'b1;
-	assign btnC = 1'b0;
-	assign btnU = 1'b0;
-	assign btnR = 1'b0;
-	assign btnL = 1'b0;
-	assign btnD = 1'b0;
+	assign BtnC = 1'b0;
+	assign BtnU = 1'b0;
+	assign BtnR = 1'b0;
+	assign BtnL = 1'b0;
+	assign BtnD = 1'b0;
 	assign Sw1 = 1'b1;
 	assign Sw2 = 1'b0;
 	assign Sw3 = 1'b0;
@@ -67,7 +68,7 @@ module BattleCatsTopTB;
 	// Stuff I'm adding
 	
 	// Core signals
-	wire gameSCEN;
+	reg gameSCEN;
 	wire damageCalcDone;
 	wire battlefrontDone;
 	wire battlefrontACK;
@@ -139,7 +140,24 @@ module BattleCatsTopTB;
 	
 	end
 	
-	GameEngine engine(.clk(ClkPort), .rst(Reset), .debouncedBtnU(1'b1), .gameSCEN(gameSCEN));
+	// Generate gameSCEN 
+	reg [5:0] counter;
+	always @(posedge ClkPort, posedge Reset)
+	begin
+		if(Reset)
+		begin
+			counter <= 0;
+			gameSCEN <= 0;
+		end
+		else
+		begin
+			counter <= counter + 1;
+			if(counter == 6'b1111_11) gameSCEN <= 1;
+			else gameSCEN <= 0;
+		end
+	end
+	
+	// GameEngine engine(.clk(ClkPort), .rst(Reset), .debouncedBtnU(1'b1), .gameSCEN(gameSCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
 	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
 	.unitLoc0(unitLoc0),
@@ -863,5 +881,13 @@ module BattleCatsTopTB;
 	assign vgaR = rgb[11 : 8];
 	assign vgaG = rgb[7  : 4];
 	assign vgaB = rgb[3  : 0];
+	
+	initial begin
+		for(gameTickClock = 0; gameTickClock < 260; gameTickClock = gameTickClock + 1)
+		begin
+			@(posedge gameSCEN);
+		end
+		$display("%d game ticks have passed.", gameTickClock);
+	end
 	
 endmodule

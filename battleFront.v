@@ -237,7 +237,7 @@ module BattleFront(
 					if(enemyType0 != 2'b00)
 					begin
 						enemyFront <= enemyLoc0;
-						enemyFront <= 5'b0000_0;
+						enemyDamageSelect <= 5'b0000_0;
 					end
 					else 
 					begin
