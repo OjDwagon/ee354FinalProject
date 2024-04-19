@@ -136,7 +136,7 @@ module BattleCatsTop(
 	
 	reg [8:0] fakeUnitLoc0;
 	
-	assign @(posedge gameSCEN)
+	always @(posedge gameSCEN)
 	begin
 		if(Reset) fakeUnitLoc0 <= 9'b1111_1111_1;
 		else fakeUnitLoc0 <= fakeUnitLoc0 + 1;
@@ -147,7 +147,7 @@ module BattleCatsTop(
 	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
 	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
-	.unitLoc0(fakeUnitLoc0),
+	.unitLoc0(unitLoc0),
 	.unitLoc1(unitLoc1),
 	.unitLoc2(unitLoc2),
 	.unitLoc3(unitLoc3),
@@ -217,7 +217,7 @@ module BattleCatsTop(
 	.reset(Reset),
 	.damageCalcDone(damageCalcDone), 
 	.battlefrontDone(battlefrontDone), 
-	.gameSCEN(gameSEN), 
+	.gameSCEN(gameSCEN), 
 	.battlefrontACK(battlefrontACK),
 	.damageCalcACK(damageCalcACK),
 	.moveSCEN(moveSCEN), 

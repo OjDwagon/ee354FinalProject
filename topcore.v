@@ -31,7 +31,7 @@ assign damageSCEN = state[3];
 
 always@(posedge clk, posedge reset)
 begin
-	if(reset) state <= QWaitBF;
+	if(reset) state <= QWriteVGA;
 	else
 		begin
 			case(state)

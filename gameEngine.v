@@ -6,6 +6,7 @@
 module GameEngine(
 	input clk,
 	input rst,
+	input debouncedBtnU,
 	output gameSCEN
    );
 	
@@ -37,8 +38,11 @@ module GameEngine(
 				
 				ADVANCE:
 				begin
-					state <= WAIT;
-					counter <= counter + 1;
+					if(debouncedBtnU)
+					begin
+						state <= WAIT;
+						counter <= counter + 1;
+					end
 				end
 				default:
 				begin
