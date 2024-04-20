@@ -77,7 +77,6 @@ begin
 					//if(counter == 4'b1111) 
 					begin
 						if(canSpawn)
-						dead <= 1'b0;
 						begin
 							case({leftSCEN, rightSCEN, downSCEN})
 								//4'b1000: state <= QDeploy0;
@@ -129,8 +128,8 @@ begin
 					if(health <= damageIn)
 						begin
 							state <= QI;
-							unitType <= 2'b00;
-							dead <= 1'b1;
+							//unitType <= 2'b00;
+							//dead <= 1'b1;
 						end
 					// RTL
 					

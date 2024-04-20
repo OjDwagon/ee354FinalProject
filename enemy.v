@@ -100,8 +100,8 @@ begin
 					if(health <= damageIn)
 					begin
 					state <= QI;
-					enemyType <= 2'b00;
-					dead <= 1'b1;
+					//enemyType <= 2'b00;
+					//dead <= 1'b1;
 					end
 					// RTL
 					

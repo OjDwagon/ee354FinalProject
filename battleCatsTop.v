@@ -162,14 +162,14 @@ module BattleCatsTop(
 	wire down_money_SCEN;
 	
 	//debouncers for the money_clock specifically
-	ee201_debouncer #(.N_dc(5)) left__money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnL), .DPB(), .SCEN(), .MCEN(left_money_SCEN), .CCEN());
-	ee201_debouncer #(.N_dc(5)) right_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(), .MCEN(right_money_SCEN), .CCEN());
-	ee201_debouncer #(.N_dc(5)) down_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(), .MCEN(down_money_SCEN), .CCEN());
+	ee201_debouncer #(.N_dc(25)) left__money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnL), .DPB(left_money_SCEN), .SCEN(), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) right_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnR), .DPB(right_money_SCEN), .SCEN(), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) down_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnD), .DPB(down_money_SCEN), .SCEN(), .MCEN(), .CCEN());
 	
 	
 	reg [15:0] money_counter;
 	
-	always@(posedge DIV_CLK[22], posedge Reset, posedge right_money_SCEN, posedge left_money_SCEN, posedge down_money_SCEN)
+	always@(posedge DIV_CLK[22], posedge Reset)
 	begin : MONEY_COUNTER
 		if(Reset) money_counter <= 0;
 		else
@@ -177,7 +177,7 @@ module BattleCatsTop(
 				if(~pauseCCEN) begin // pausing the game should also pause the counter
 					if(money_counter != 14'd9999) // stop incrementing when we reach the top
 						money_counter <= money_counter + 1'b1;
-					if(right_money_SCEN || left_money_SCEN || down_money_SCEN)
+					if((right_money_SCEN || left_money_SCEN || down_money_SCEN) && money_counter >= 16'd100) // so no wrap around
 						money_counter <= money_counter - 16'd100;
 				end
 			end
