@@ -18,15 +18,14 @@ module Unit(
 	input leftSCEN,
 	input rightSCEN,
 	input downSCEN,
-	
-	input purchase,
+
 	
 	input [8:0] enemyFront, // location of the frontmost enemy
 	
 	output reg [8:0] position, // choose how many bits we need for position
 	output reg [7:0] damageOut, // choose how many bits we need for damage
 	
-	output reg [1:0] unitType// 00 dead, 1-3 different unit types
+	output reg [1:0] unitType,// 00 dead, 1-3 different unit types
 	
 	// These outputs are for running testbenches, have an uncommented version of this in another file
 	/*output q_I,
@@ -37,7 +36,8 @@ module Unit(
 	
 	output reg [7:0] health*/
 	
-	// output dead
+	input canSpawn,
+	output reg dead
 
 );
 
@@ -72,10 +72,12 @@ begin
 				begin
 					// state transition
 					unitType <= 2'b00;
+					dead <= 1'b1;
 					
 					//if(counter == 4'b1111) 
 					begin
-						if(purchase)
+						if(canSpawn)
+						dead <= 1'b0;
 						begin
 							case({leftSCEN, rightSCEN, downSCEN})
 								//4'b1000: state <= QDeploy0;
@@ -125,15 +127,16 @@ begin
 				begin
 					// State Transtition Logic
 					if(health <= damageIn)
-					begin
-					state <= QI;
-					unitType <= 2'b00;
-					counter <= 4'b0000;
-					end
+						begin
+							state <= QI;
+							unitType <= 2'b00;
+							dead <= 1'b1;
+						end
 					// RTL
 					
+					dead <= 1'b0;
+					
 					// accept damage provided by TOP, can be 0 to whatever the attack damage is of enemy units
-					//dead <= 1'b0;
 					if(damageSCEN) health <= health - damageIn;
 					if(moveSCEN) // receives moveSCEN from battlefront calculator
 					begin

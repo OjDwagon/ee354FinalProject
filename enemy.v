@@ -14,7 +14,7 @@ module Enemy(
 	output reg [8:0] position, // choose how many bits we need for position
 	output reg [7:0] damageOut, // choose how many bits we need for damage
 	
-	output reg [1:0] enemyType
+	output reg [1:0] enemyType,
 	
 	/*output q_I,
 	output q_Deploy1,
@@ -22,7 +22,8 @@ module Enemy(
 	output q_Deploy3,
 	output q_Alive*/
 	
-	//output dead
+	output reg dead,
+	input canSpawn
 );
 
 reg [7:0] power; // determines how strong an enemy's attack is
@@ -32,7 +33,7 @@ reg [7:0] health; // internal to the unit, keeps track how much health they have
 reg [6:0] state;
 //assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
-reg [15:0] counter;
+//reg [15:0] counter;
 
 localparam
 	QI =       5'b10000,
@@ -54,16 +55,11 @@ begin
 				begin
 					// state transition
 					enemyType <= 2'b00;
+					dead <= 1'b1;
 					
-					/*case({SW0, SW1, SW2, SW3})
-						4'b1000: state <= QDeploy0;
-						4'b0100: state <= QDeploy1;
-						4'b0010: state <= QDeploy2;
-					//	4'b0001: state <= QDeploy3;
-					endcase*/
+					if(canSpawn) state <= QDeploy1; // making all enemies type 1 for now
 					
-					if(counter == 16'b1111_1111_1111) state <= QDeploy1; // making all enemies type 1 for now
-					counter <= counter + 4'b0001;
+					//counter <= counter + 4'b0001;
 					// RTL
 					position <= 9'b0000_0000_0; // CHANGED FROM PLAYER
 					//I <= 3'b000;
@@ -105,12 +101,12 @@ begin
 					begin
 					state <= QI;
 					enemyType <= 2'b00;
-					
+					dead <= 1'b1;
 					end
 					// RTL
 					
 					// accept damage provided by TOP, can be 0 to whatever the attack damage is of enemy units
-					//dead <= 1'b0;
+					dead <= 1'b0;
 					if(damageSCEN) health <= health - damageIn;
 					if(moveSCEN) // receives moveSCEN from battlefront calculator
 					begin

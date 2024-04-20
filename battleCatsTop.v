@@ -123,7 +123,7 @@ module BattleCatsTop(
         enemyAttack11, enemyAttack12, enemyAttack13, 
         enemyAttack14, enemyAttack15;
 	
-	assign purchase = 1'b1; // For now we are having it so that the purchase signal is always up
+	//assign purchase = 1'b1; // For now we are having it so that the purchase signal is always up
 	
 	// enemy and unit wiring (changed to 2 bits)
 	wire [1:0] unitType0, unitType1, unitType2, unitType3,
@@ -144,30 +144,43 @@ module BattleCatsTop(
 	end*/
 	
 	// Debouncer SCEN signals
-	wire pauseSCEN;
+	wire pauseCCEN;
 	wire leftSCEN;
 	wire rightSCEN;
 	wire downSCEN;
 	
 	// the #(.N_dc(25)) part sets values for parameters inside the module definition for the debouncer.
 	// separater from input/output wiring!
-	ee201_debouncer #(.N_dc(25)) pause_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnU), .DPB(), .SCEN(pauseSCEN), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) pause_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnU), .DPB(), .SCEN(), .MCEN(), .CCEN(pauseCCEN));
 	ee201_debouncer #(.N_dc(25)) left_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnL), .DPB(), .SCEN(leftSCEN), .MCEN(), .CCEN());
 	ee201_debouncer #(.N_dc(25)) right_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(rightSCEN), .MCEN(), .CCEN());
 	ee201_debouncer #(.N_dc(25)) down_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(downSCEN), .MCEN(), .CCEN());
 	
+	// money SCEN
+	wire left_money_SCEN;
+	wire right_money_SCEN;
+	wire down_money_SCEN;
+	
+	//debouncers for the money_clock specifically
+	ee201_debouncer #(.N_dc(5)) left__money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnL), .DPB(), .SCEN(), .MCEN(left_money_SCEN), .CCEN());
+	ee201_debouncer #(.N_dc(5)) right_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(), .MCEN(right_money_SCEN), .CCEN());
+	ee201_debouncer #(.N_dc(5)) down_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(), .MCEN(down_money_SCEN), .CCEN());
+	
+	
 	reg [15:0] money_counter;
 	
-	always@(posedge DIV_CLK[22], posedge Reset)
+	always@(posedge DIV_CLK[22], posedge Reset, posedge right_money_SCEN, posedge left_money_SCEN, posedge down_money_SCEN)
 	begin : MONEY_COUNTER
 		if(Reset) money_counter <= 0;
 		else
-		begin
-		if(money_counter != 16'b1111_1111_1111) // stop incrementing when we reach the top
-			money_counter <= money_counter + 1'b1;
-		if(rightSCEN || leftSCEN || downSCEN)
-			money_counter <= money_counter - 16'b0000_0010_0000;
-		end
+			begin
+				if(~pauseCCEN) begin // pausing the game should also pause the counter
+					if(money_counter != 14'd9999) // stop incrementing when we reach the top
+						money_counter <= money_counter + 1'b1;
+					if(right_money_SCEN || left_money_SCEN || down_money_SCEN)
+						money_counter <= money_counter - 16'd100;
+				end
+			end
 	end
 	
 	wire [6:0] ssdOut;
@@ -178,7 +191,14 @@ module BattleCatsTop(
 	assign {Ca, Cb, Cc, Cd, Ce, Cf, Cg} = ssdOut[6 : 0];
     assign {An7, An6, An5, An4, An3, An2, An1, An0} = {4'b1111, anode};
 	
-	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN), .debouncedBtnU(pauseSCEN));
+	//wire canSpawn;
+	//assign canSpawn = 1'b1;
+	
+	wire [15:0] dead;
+	wire [15:0] canSpawn;
+	PriorityResolver priorityresolver(.requestSignals(dead), .grantSignals(canSpawn));
+	
+	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN), .debouncedBtnU(pauseCCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
 	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
 	.unitLoc0(unitLoc0),
@@ -426,7 +446,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[0]), .dead(dead[0]),
 		.enemyFront(enemyFront),
 		.position(unitLoc0),
 		.damageOut(unitAttack0),
@@ -442,7 +462,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[1]), .dead(dead[1]),
 		.enemyFront(enemyFront),
 		.position(unitLoc1),
 		.damageOut(unitAttack1),
@@ -458,7 +478,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[2]), .dead(dead[2]),
 		.enemyFront(enemyFront),
 		.position(unitLoc2),
 		.damageOut(unitAttack2),
@@ -474,7 +494,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[3]), .dead(dead[3]),
 		.enemyFront(enemyFront),
 		.position(unitLoc3),
 		.damageOut(unitAttack3),
@@ -490,7 +510,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[4]), .dead(dead[4]),
 		.enemyFront(enemyFront),
 		.position(unitLoc4),
 		.damageOut(unitAttack4),
@@ -506,7 +526,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[5]), .dead(dead[5]),
 		.enemyFront(enemyFront),
 		.position(unitLoc5),
 		.damageOut(unitAttack5),
@@ -522,7 +542,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[6]), .dead(dead[6]),
 		.enemyFront(enemyFront),
 		.position(unitLoc6),
 		.damageOut(unitAttack6),
@@ -538,7 +558,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[7]), .dead(dead[7]),
 		.enemyFront(enemyFront),
 		.position(unitLoc7),
 		.damageOut(unitAttack7),
@@ -554,7 +574,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[8]), .dead(dead[8]),
 		.enemyFront(enemyFront),
 		.position(unitLoc8),
 		.damageOut(unitAttack8),
@@ -570,7 +590,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[9]), .dead(dead[9]),
 		.enemyFront(enemyFront),
 		.position(unitLoc9),
 		.damageOut(unitAttack9),
@@ -586,7 +606,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[10]), .dead(dead[10]),
 		.enemyFront(enemyFront),
 		.position(unitLoc10),
 		.damageOut(unitAttack10),
@@ -602,7 +622,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[11]), .dead(dead[11]),
 		.enemyFront(enemyFront),
 		.position(unitLoc11),
 		.damageOut(unitAttack11),
@@ -618,7 +638,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[12]), .dead(dead[12]),
 		.enemyFront(enemyFront),
 		.position(unitLoc12),
 		.damageOut(unitAttack12),
@@ -634,7 +654,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[13]), .dead(dead[13]),
 		.enemyFront(enemyFront),
 		.position(unitLoc13),
 		.damageOut(unitAttack13),
@@ -650,7 +670,7 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[14]), .dead(dead[14]),
 		.enemyFront(enemyFront),
 		.position(unitLoc14),
 		.damageOut(unitAttack14),
@@ -666,12 +686,16 @@ module BattleCatsTop(
 		.leftSCEN(leftSCEN),
 		.rightSCEN(rightSCEN),
 		.downSCEN(downSCEN),
-		.purchase(purchase),
+		.canSpawn(canSpawn[15]), .dead(dead[15]),
 		.enemyFront(enemyFront),
 		.position(unitLoc15),
 		.damageOut(unitAttack15),
 		.unitType(unitType15)
-	);	
+	);
+
+	wire [15:0] enemyDead;
+	wire [15:0] enemyCanSpawn;
+	PriorityResolver enemy_priorityresolver(.requestSignals(enemyDead), .grantSignals(enemyCanSpawn));
 
 	Enemy enemy0(
 		.clk(ClkPort), 
@@ -680,12 +704,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage0),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc0),
 		.damageOut(enemyAttack0),
-		.enemyType(enemyType0)
+		.enemyType(enemyType0),
+		.dead(enemyDead[0]), .canSpawn(enemyCanSpawn[0])
 	);
 	Enemy enemy1(
 		.clk(ClkPort), 
@@ -694,12 +717,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage1),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc1),
 		.damageOut(enemyAttack1),
-		.enemyType(enemyType1)
+		.enemyType(enemyType1),
+		.dead(enemyDead[1]), .canSpawn(enemyCanSpawn[1])
 	);
 	Enemy enemy2(
 		.clk(ClkPort), 
@@ -707,13 +729,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage2),
-
-		
+		.damageIn(enemyAppliedDamage2),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc2),
 		.damageOut(enemyAttack2),
-		.enemyType(enemyType2)
+		.enemyType(enemyType2),
+		.dead(enemyDead[2]), .canSpawn(enemyCanSpawn[2])
 	);
 	Enemy enemy3(
 		.clk(ClkPort), 
@@ -722,12 +743,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage3),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc3),
 		.damageOut(enemyAttack3),
-		.enemyType(enemyType3)
+		.enemyType(enemyType3),
+		.dead(enemyDead[3]), .canSpawn(enemyCanSpawn[3])
 	);
 	Enemy enemy4(
 		.clk(ClkPort), 
@@ -736,12 +756,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage4),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc4),
 		.damageOut(enemyAttack4),
-		.enemyType(enemyType4)
+		.enemyType(enemyType4),
+		.dead(enemyDead[4]), .canSpawn(enemyCanSpawn[4])
 	);
 	Enemy enemy5(
 		.clk(ClkPort), 
@@ -749,13 +768,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage5),
-
-		
+		.damageIn(enemyAppliedDamage5),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc5),
 		.damageOut(enemyAttack5),
-		.enemyType(enemyType5)
+		.enemyType(enemyType5),
+		.dead(enemyDead[5]), .canSpawn(enemyCanSpawn[5])
 	);
 	Enemy enemy6(
 		.clk(ClkPort), 
@@ -763,13 +781,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage6),
-
-		
+		.damageIn(enemyAppliedDamage6),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc6),
 		.damageOut(enemyAttack6),
-		.enemyType(enemyType6)
+		.enemyType(enemyType6),
+		.dead(enemyDead[6]), .canSpawn(enemyCanSpawn[6])
 	);
 	Enemy enemy7(
 		.clk(ClkPort), 
@@ -777,13 +794,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage7),
-
-		
+		.damageIn(enemyAppliedDamage7),	
 		.unitFront(friendlyFront),
 		.position(enemyLoc7),
 		.damageOut(enemyAttack7),
-		.enemyType(enemyType7)
+		.enemyType(enemyType7),
+		.dead(enemyDead[7]), .canSpawn(enemyCanSpawn[7])
 	);	
 	Enemy enemy8(
 		.clk(ClkPort), 
@@ -791,13 +807,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage8),
-
-		
+		.damageIn(enemyAppliedDamage8),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc8),
 		.damageOut(enemyAttack8),
-		.enemyType(enemyType8)
+		.enemyType(enemyType8),
+		.dead(enemyDead[8]), .canSpawn(enemyCanSpawn[8])
 	);
 	Enemy enemy9(
 		.clk(ClkPort), 
@@ -805,13 +820,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage9),
-
-		
+		.damageIn(enemyAppliedDamage9),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc9),
 		.damageOut(enemyAttack9),
-		.enemyType(enemyType9)
+		.enemyType(enemyType9),
+		.dead(enemyDead[9]), .canSpawn(enemyCanSpawn[9])
 	);
 	Enemy enemy10(
 		.clk(ClkPort), 
@@ -819,13 +833,12 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage10),
-
-		
+		.damageIn(enemyAppliedDamage10),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc10),
 		.damageOut(enemyAttack10),
-		.enemyType(enemyType10)
+		.enemyType(enemyType10),
+		.dead(enemyDead[10]), .canSpawn(enemyCanSpawn[10])
 	);
 	Enemy enemy11(
 		.clk(ClkPort), 
@@ -834,12 +847,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage11),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc11),
 		.damageOut(enemyAttack11),
-		.enemyType(enemyType11)
+		.enemyType(enemyType11),
+		.dead(enemyDead[11]), .canSpawn(enemyCanSpawn[11])
 	);
 	Enemy enemy12(
 		.clk(ClkPort), 
@@ -848,12 +860,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage12),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc12),
 		.damageOut(enemyAttack12),
-		.enemyType(enemyType12)
+		.enemyType(enemyType12),
+		.dead(enemyDead[12]), .canSpawn(enemyCanSpawn[12])
 	);
 	Enemy enemy13(
 		.clk(ClkPort), 
@@ -862,12 +873,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage13),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc13),
 		.damageOut(enemyAttack13),
-		.enemyType(enemyType13)
+		.enemyType(enemyType13),
+		.dead(enemyDead[13]), .canSpawn(enemyCanSpawn[13])
 	);
 	Enemy enemy14(
 		.clk(ClkPort), 
@@ -876,12 +886,11 @@ module BattleCatsTop(
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage14),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc14),
 		.damageOut(enemyAttack14),
-		.enemyType(enemyType14)
+		.enemyType(enemyType14),
+		.dead(enemyDead[14]), .canSpawn(enemyCanSpawn[14])
 	);
 	Enemy enemy15(
 		.clk(ClkPort), 
@@ -889,15 +898,13 @@ module BattleCatsTop(
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage15),
-
-		
+		.damageIn(enemyAppliedDamage15),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc15),
 		.damageOut(enemyAttack15),
-		.enemyType(enemyType15)
+		.enemyType(enemyType15),
+		.dead(enemyDead[15]), .canSpawn(enemyCanSpawn[15])
 	);	
-
 	
 	assign vgaR = rgb[11 : 8];
 	assign vgaG = rgb[7  : 4];
@@ -906,87 +913,4 @@ module BattleCatsTop(
 	// disable mamory ports
 	assign {MemOE, MemWR, RamCS, QuadSpiFlashCS} = 4'b1111;
 	
-	//------------
-// SSD (Seven Segment Display)
-	// reg [3:0]	SSD;
-	// wire [3:0]	SSD3, SSD2, SSD1, SSD0;
-	
-	//SSDs display 
-	//to show how we can interface our "game" module with the SSD's, we output the 12-bit rgb background value to the SSD's
-	assign SSD3 = 4'b0000;
-	assign SSD2 = background[11:8];
-	assign SSD1 = background[7:4];
-	assign SSD0 = background[3:0];
-
-
-	// need a scan clk for the seven segment display 
-	
-	// 100 MHz / 2^18 = 381.5 cycles/sec ==> frequency of DIV_CLK[17]
-	// 100 MHz / 2^19 = 190.7 cycles/sec ==> frequency of DIV_CLK[18]
-	// 100 MHz / 2^20 =  95.4 cycles/sec ==> frequency of DIV_CLK[19]
-	
-	// 381.5 cycles/sec (2.62 ms per digit) [which means all 4 digits are lit once every 10.5 ms (reciprocal of 95.4 cycles/sec)] works well.
-	
-	//                  --|  |--|  |--|  |--|  |--|  |--|  |--|  |--|  |   
-    //                    |  |  |  |  |  |  |  |  |  |  |  |  |  |  |  | 
-	//  DIV_CLK[17]       |__|  |__|  |__|  |__|  |__|  |__|  |__|  |__|
-	//
-	//               -----|     |-----|     |-----|     |-----|     |
-    //                    |  0  |  1  |  0  |  1  |     |     |     |     
-	//  DIV_CLK[18]       |_____|     |_____|     |_____|     |_____|
-	//
-	//         -----------|           |-----------|           |
-    //                    |  0     0  |  1     1  |           |           
-	//  DIV_CLK[19]       |___________|           |___________|
-	//
-
-/*
-	assign ssdscan_clk = DIV_CLK[19:18];
-	assign An0	= !(~(ssdscan_clk[1]) && ~(ssdscan_clk[0]));  // when ssdscan_clk = 00
-	assign An1	= !(~(ssdscan_clk[1]) &&  (ssdscan_clk[0]));  // when ssdscan_clk = 01
-	assign An2	=  !((ssdscan_clk[1]) && ~(ssdscan_clk[0]));  // when ssdscan_clk = 10
-	assign An3	=  !((ssdscan_clk[1]) &&  (ssdscan_clk[0]));  // when ssdscan_clk = 11
-	// Turn off another 4 anodes
-	assign {An7, An6, An5, An4} = 4'b1111;
-	
-	always @ (ssdscan_clk, SSD0, SSD1, SSD2, SSD3)
-	begin : SSD_SCAN_OUT
-		case (ssdscan_clk) 
-				  2'b00: SSD = SSD0;
-				  2'b01: SSD = SSD1;
-				  2'b10: SSD = SSD2;
-				  2'b11: SSD = SSD3;
-		endcase 
-	end
-
-	// Following is Hex-to-SSD conversion
-	always @ (SSD) 
-	begin : HEX_TO_SSD
-		case (SSD) // in this solution file the dot points are made to glow by making Dp = 0
-		    //                                                                abcdefg,Dp
-			4'b0000: SSD_CATHODES = 8'b00000010; // 0
-			4'b0001: SSD_CATHODES = 8'b10011110; // 1
-			4'b0010: SSD_CATHODES = 8'b00100100; // 2
-			4'b0011: SSD_CATHODES = 8'b00001100; // 3
-			4'b0100: SSD_CATHODES = 8'b10011000; // 4
-			4'b0101: SSD_CATHODES = 8'b01001000; // 5
-			4'b0110: SSD_CATHODES = 8'b01000000; // 6
-			4'b0111: SSD_CATHODES = 8'b00011110; // 7
-			4'b1000: SSD_CATHODES = 8'b00000000; // 8
-			4'b1001: SSD_CATHODES = 8'b00001000; // 9
-			4'b1010: SSD_CATHODES = 8'b00010000; // A
-			4'b1011: SSD_CATHODES = 8'b11000000; // B
-			4'b1100: SSD_CATHODES = 8'b01100010; // C
-			4'b1101: SSD_CATHODES = 8'b10000100; // D
-			4'b1110: SSD_CATHODES = 8'b01100000; // E
-			4'b1111: SSD_CATHODES = 8'b01110000; // F    
-			default: SSD_CATHODES = 8'bXXXXXXXX; // default is not needed as we covered all cases
-		endcase
-	end	
-	
-	// reg [7:0]  SSD_CATHODES;
-	assign {Ca, Cb, Cc, Cd, Ce, Cf, Cg, Dp} = {SSD_CATHODES};
-	
-*/
-
 endmodule
