@@ -76,71 +76,71 @@ module DamageDecoder(
 		case(unitDamageSelect)
 			5'b00000:
 			begin
-				unitAppliedDamage0 = scaledUnitDamage;
+				unitAppliedDamage0 = scaledEnemyDamage;
 			end
 			5'b00001:
 			begin
-				unitAppliedDamage1 = scaledUnitDamage;
+				unitAppliedDamage1 = scaledEnemyDamage;
 			end
 			5'b00010:
 			begin
-				unitAppliedDamage2 = scaledUnitDamage;
+				unitAppliedDamage2 = scaledEnemyDamage;
 			end 
 			5'b00011:
 			begin
-				unitAppliedDamage3 = scaledUnitDamage;
+				unitAppliedDamage3 = scaledEnemyDamage;
 			end  
 			5'b00100:
 			begin
-				unitAppliedDamage4 = scaledUnitDamage;
+				unitAppliedDamage4 = scaledEnemyDamage;
 			end
 			5'b00101:
 			begin
-				unitAppliedDamage5 = scaledUnitDamage;
+				unitAppliedDamage5 = scaledEnemyDamage;
 			end
 			5'b00110:
 			begin
-				unitAppliedDamage6 = scaledUnitDamage;
+				unitAppliedDamage6 = scaledEnemyDamage;
 			end 
 			5'b00111:
 			begin
-				unitAppliedDamage7 = scaledUnitDamage;
+				unitAppliedDamage7 = scaledEnemyDamage;
 			end
 			5'b01000:
 			begin
-				unitAppliedDamage8 = scaledUnitDamage;
+				unitAppliedDamage8 = scaledEnemyDamage;
 			end
 			5'b01001:
 			begin
-				unitAppliedDamage9 = scaledUnitDamage;
+				unitAppliedDamage9 = scaledEnemyDamage;
 			end
 			5'b01010:
 			begin
-				unitAppliedDamage10 = scaledUnitDamage;
+				unitAppliedDamage10 = scaledEnemyDamage;
 			end 
 			5'b01011:
 			begin
-				unitAppliedDamage11 = scaledUnitDamage;
+				unitAppliedDamage11 = scaledEnemyDamage;
 			end
 			5'b01100:
 			begin
-				unitAppliedDamage12 = scaledUnitDamage;
+				unitAppliedDamage12 = scaledEnemyDamage;
 			end
 			5'b01101:
 			begin
-				unitAppliedDamage13 = scaledUnitDamage;
+				unitAppliedDamage13 = scaledEnemyDamage;
 			end
 			5'b01110:
 			begin
-				unitAppliedDamage14 = scaledUnitDamage;
+				unitAppliedDamage14 = scaledEnemyDamage;
 			end 
 			5'b01111:
 			begin
-				unitAppliedDamage15 = scaledUnitDamage;
+				unitAppliedDamage15 = scaledEnemyDamage;
 			end 
 			default:
             begin
-                friendlyTowerAppliedDamage = scaledUnitDamage;
+                friendlyTowerAppliedDamage = scaledEnemyDamage;
             end		
 		endcase
 	end
@@ -168,71 +168,71 @@ module DamageDecoder(
 		case(enemyDamageSelect)
 			5'b00000:
 			begin
-				enemyAppliedDamage0 = scaledEnemyDamage;
+				enemyAppliedDamage0 = scaledUnitDamage;
 			end
 			5'b00001:
 			begin
-				enemyAppliedDamage1 = scaledEnemyDamage;
+				enemyAppliedDamage1 = scaledUnitDamage;
 			end
 			5'b00010:
 			begin
-				enemyAppliedDamage2 = scaledEnemyDamage;
+				enemyAppliedDamage2 = scaledUnitDamage;
 			end 
 			5'b00011:
 			begin
-				enemyAppliedDamage3 = scaledEnemyDamage;
+				enemyAppliedDamage3 = scaledUnitDamage;
 			end  
 			5'b00100:
 			begin
-				enemyAppliedDamage4 = scaledEnemyDamage;
+				enemyAppliedDamage4 = scaledUnitDamage;
 			end
 			5'b00101:
 			begin
-				enemyAppliedDamage5 = scaledEnemyDamage;
+				enemyAppliedDamage5 = scaledUnitDamage;
 			end
 			5'b00110:
 			begin
-				enemyAppliedDamage6 = scaledEnemyDamage;
+				enemyAppliedDamage6 = scaledUnitDamage;
 			end 
 			5'b00111:
 			begin
-				enemyAppliedDamage7 = scaledEnemyDamage;
+				enemyAppliedDamage7 = scaledUnitDamage;
 			end
 			5'b01000:
 			begin
-				enemyAppliedDamage8 = scaledEnemyDamage;
+				enemyAppliedDamage8 = scaledUnitDamage;
 			end
 			5'b01001:
 			begin
-				enemyAppliedDamage9 = scaledEnemyDamage;
+				enemyAppliedDamage9 = scaledUnitDamage;
 			end
 			5'b01010:
 			begin
-				enemyAppliedDamage10 = scaledEnemyDamage;
+				enemyAppliedDamage10 = scaledUnitDamage;
 			end 
 			5'b01011:
 			begin
-				enemyAppliedDamage11 = scaledEnemyDamage;
+				enemyAppliedDamage11 = scaledUnitDamage;
 			end
 			5'b01100:
 			begin
-				enemyAppliedDamage12 = scaledEnemyDamage;
+				enemyAppliedDamage12 = scaledUnitDamage;
 			end
 			5'b01101:
 			begin
-				enemyAppliedDamage13 = scaledEnemyDamage;
+				enemyAppliedDamage13 = scaledUnitDamage;
 			end
 			5'b01110:
 			begin
-				enemyAppliedDamage14 = scaledEnemyDamage;
+				enemyAppliedDamage14 = scaledUnitDamage;
 			end 
 			5'b01111:
 			begin
-				enemyAppliedDamage15 = scaledEnemyDamage;
+				enemyAppliedDamage15 = scaledUnitDamage;
 			end 
             default:
             begin
-                enemyTowerAppliedDamage = scaledEnemyDamage;
+                enemyTowerAppliedDamage = scaledUnitDamage;
             end		
 		endcase
 	end

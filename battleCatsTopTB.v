@@ -157,6 +157,10 @@ module BattleCatsTopTB;
 		end
 	end
 	
+	wire [15:0] dead;
+	wire [15:0] canSpawn;
+	PriorityResolver priorityresolver(.requestSignals(dead), .grantSignals(canSpawn));
+	
 	// GameEngine engine(.clk(ClkPort), .rst(Reset), .debouncedBtnU(1'b1), .gameSCEN(gameSCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
 	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
@@ -402,10 +406,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage0),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[0]), .dead(dead[0]),
 		.enemyFront(enemyFront),
 		.position(unitLoc0),
 		.damageOut(unitAttack0),
@@ -418,10 +422,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage1),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[1]), .dead(dead[1]),
 		.enemyFront(enemyFront),
 		.position(unitLoc1),
 		.damageOut(unitAttack1),
@@ -434,10 +438,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage2),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[2]), .dead(dead[2]),
 		.enemyFront(enemyFront),
 		.position(unitLoc2),
 		.damageOut(unitAttack2),
@@ -450,10 +454,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage3),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[3]), .dead(dead[3]),
 		.enemyFront(enemyFront),
 		.position(unitLoc3),
 		.damageOut(unitAttack3),
@@ -466,10 +470,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage4),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[4]), .dead(dead[4]),
 		.enemyFront(enemyFront),
 		.position(unitLoc4),
 		.damageOut(unitAttack4),
@@ -482,10 +486,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage5),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[5]), .dead(dead[5]),
 		.enemyFront(enemyFront),
 		.position(unitLoc5),
 		.damageOut(unitAttack5),
@@ -498,10 +502,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage6),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[6]), .dead(dead[6]),
 		.enemyFront(enemyFront),
 		.position(unitLoc6),
 		.damageOut(unitAttack6),
@@ -514,10 +518,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage7),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[7]), .dead(dead[7]),
 		.enemyFront(enemyFront),
 		.position(unitLoc7),
 		.damageOut(unitAttack7),
@@ -530,10 +534,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage8),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[8]), .dead(dead[8]),
 		.enemyFront(enemyFront),
 		.position(unitLoc8),
 		.damageOut(unitAttack8),
@@ -546,10 +550,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage9),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[9]), .dead(dead[9]),
 		.enemyFront(enemyFront),
 		.position(unitLoc9),
 		.damageOut(unitAttack9),
@@ -562,10 +566,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage10),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[10]), .dead(dead[10]),
 		.enemyFront(enemyFront),
 		.position(unitLoc10),
 		.damageOut(unitAttack10),
@@ -578,10 +582,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage11),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[11]), .dead(dead[11]),
 		.enemyFront(enemyFront),
 		.position(unitLoc11),
 		.damageOut(unitAttack11),
@@ -594,10 +598,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage12),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[12]), .dead(dead[12]),
 		.enemyFront(enemyFront),
 		.position(unitLoc12),
 		.damageOut(unitAttack12),
@@ -610,10 +614,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage13),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[13]), .dead(dead[13]),
 		.enemyFront(enemyFront),
 		.position(unitLoc13),
 		.damageOut(unitAttack13),
@@ -626,10 +630,10 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage14),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[14]), .dead(dead[14]),
 		.enemyFront(enemyFront),
 		.position(unitLoc14),
 		.damageOut(unitAttack14),
@@ -642,15 +646,19 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(unitAppliedDamage15),
-		.SW1(Sw1),
-		.SW2(Sw2),
-		.SW3(Sw3),
-		.purchase(purchase),
+		.leftSCEN(leftSCEN),
+		.rightSCEN(rightSCEN),
+		.downSCEN(downSCEN),
+		.canSpawn(canSpawn[15]), .dead(dead[15]),
 		.enemyFront(enemyFront),
 		.position(unitLoc15),
 		.damageOut(unitAttack15),
 		.unitType(unitType15)
-	);	
+	);
+
+	wire [15:0] enemyDead;
+	wire [15:0] enemyCanSpawn;
+	PriorityResolver enemy_priorityresolver(.requestSignals(enemyDead), .grantSignals(enemyCanSpawn));
 
 	Enemy enemy0(
 		.clk(ClkPort), 
@@ -659,12 +667,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage0),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc0),
 		.damageOut(enemyAttack0),
-		.enemyType(enemyType0)
+		.enemyType(enemyType0),
+		.dead(enemyDead[0]), .canSpawn(enemyCanSpawn[0])
 	);
 	Enemy enemy1(
 		.clk(ClkPort), 
@@ -673,12 +680,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage1),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc1),
 		.damageOut(enemyAttack1),
-		.enemyType(enemyType1)
+		.enemyType(enemyType1),
+		.dead(enemyDead[1]), .canSpawn(enemyCanSpawn[1])
 	);
 	Enemy enemy2(
 		.clk(ClkPort), 
@@ -686,13 +692,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage2),
-
-		
+		.damageIn(enemyAppliedDamage2),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc2),
 		.damageOut(enemyAttack2),
-		.enemyType(enemyType2)
+		.enemyType(enemyType2),
+		.dead(enemyDead[2]), .canSpawn(enemyCanSpawn[2])
 	);
 	Enemy enemy3(
 		.clk(ClkPort), 
@@ -701,12 +706,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage3),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc3),
 		.damageOut(enemyAttack3),
-		.enemyType(enemyType3)
+		.enemyType(enemyType3),
+		.dead(enemyDead[3]), .canSpawn(enemyCanSpawn[3])
 	);
 	Enemy enemy4(
 		.clk(ClkPort), 
@@ -715,12 +719,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage4),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc4),
 		.damageOut(enemyAttack4),
-		.enemyType(enemyType4)
+		.enemyType(enemyType4),
+		.dead(enemyDead[4]), .canSpawn(enemyCanSpawn[4])
 	);
 	Enemy enemy5(
 		.clk(ClkPort), 
@@ -728,13 +731,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage5),
-
-		
+		.damageIn(enemyAppliedDamage5),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc5),
 		.damageOut(enemyAttack5),
-		.enemyType(enemyType5)
+		.enemyType(enemyType5),
+		.dead(enemyDead[5]), .canSpawn(enemyCanSpawn[5])
 	);
 	Enemy enemy6(
 		.clk(ClkPort), 
@@ -742,13 +744,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage6),
-
-		
+		.damageIn(enemyAppliedDamage6),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc6),
 		.damageOut(enemyAttack6),
-		.enemyType(enemyType6)
+		.enemyType(enemyType6),
+		.dead(enemyDead[6]), .canSpawn(enemyCanSpawn[6])
 	);
 	Enemy enemy7(
 		.clk(ClkPort), 
@@ -756,13 +757,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage7),
-
-		
+		.damageIn(enemyAppliedDamage7),	
 		.unitFront(friendlyFront),
 		.position(enemyLoc7),
 		.damageOut(enemyAttack7),
-		.enemyType(enemyType7)
+		.enemyType(enemyType7),
+		.dead(enemyDead[7]), .canSpawn(enemyCanSpawn[7])
 	);	
 	Enemy enemy8(
 		.clk(ClkPort), 
@@ -770,13 +770,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage8),
-
-		
+		.damageIn(enemyAppliedDamage8),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc8),
 		.damageOut(enemyAttack8),
-		.enemyType(enemyType8)
+		.enemyType(enemyType8),
+		.dead(enemyDead[8]), .canSpawn(enemyCanSpawn[8])
 	);
 	Enemy enemy9(
 		.clk(ClkPort), 
@@ -784,13 +783,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage9),
-
-		
+		.damageIn(enemyAppliedDamage9),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc9),
 		.damageOut(enemyAttack9),
-		.enemyType(enemyType9)
+		.enemyType(enemyType9),
+		.dead(enemyDead[9]), .canSpawn(enemyCanSpawn[9])
 	);
 	Enemy enemy10(
 		.clk(ClkPort), 
@@ -798,13 +796,12 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage10),
-
-		
+		.damageIn(enemyAppliedDamage10),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc10),
 		.damageOut(enemyAttack10),
-		.enemyType(enemyType10)
+		.enemyType(enemyType10),
+		.dead(enemyDead[10]), .canSpawn(enemyCanSpawn[10])
 	);
 	Enemy enemy11(
 		.clk(ClkPort), 
@@ -813,12 +810,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage11),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc11),
 		.damageOut(enemyAttack11),
-		.enemyType(enemyType11)
+		.enemyType(enemyType11),
+		.dead(enemyDead[11]), .canSpawn(enemyCanSpawn[11])
 	);
 	Enemy enemy12(
 		.clk(ClkPort), 
@@ -827,12 +823,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage12),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc12),
 		.damageOut(enemyAttack12),
-		.enemyType(enemyType12)
+		.enemyType(enemyType12),
+		.dead(enemyDead[12]), .canSpawn(enemyCanSpawn[12])
 	);
 	Enemy enemy13(
 		.clk(ClkPort), 
@@ -841,12 +836,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage13),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc13),
 		.damageOut(enemyAttack13),
-		.enemyType(enemyType13)
+		.enemyType(enemyType13),
+		.dead(enemyDead[13]), .canSpawn(enemyCanSpawn[13])
 	);
 	Enemy enemy14(
 		.clk(ClkPort), 
@@ -855,12 +849,11 @@ module BattleCatsTopTB;
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
 		.damageIn(enemyAppliedDamage14),
-
-		
 		.unitFront(friendlyFront),
 		.position(enemyLoc14),
 		.damageOut(enemyAttack14),
-		.enemyType(enemyType14)
+		.enemyType(enemyType14),
+		.dead(enemyDead[14]), .canSpawn(enemyCanSpawn[14])
 	);
 	Enemy enemy15(
 		.clk(ClkPort), 
@@ -868,14 +861,13 @@ module BattleCatsTopTB;
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
-		.damageIn(enemyAppliedDamage15),
-
-		
+		.damageIn(enemyAppliedDamage15),		
 		.unitFront(friendlyFront),
 		.position(enemyLoc15),
 		.damageOut(enemyAttack15),
-		.enemyType(enemyType15)
-	);	
+		.enemyType(enemyType15),
+		.dead(enemyDead[15]), .canSpawn(enemyCanSpawn[15])
+	);		
 
 	
 	assign vgaR = rgb[11 : 8];
@@ -883,7 +875,7 @@ module BattleCatsTopTB;
 	assign vgaB = rgb[3  : 0];
 	
 	initial begin
-		for(gameTickClock = 0; gameTickClock < 260; gameTickClock = gameTickClock + 1)
+		for(gameTickClock = 0; gameTickClock < 520; gameTickClock = gameTickClock + 1)
 		begin
 			@(posedge gameSCEN);
 		end
