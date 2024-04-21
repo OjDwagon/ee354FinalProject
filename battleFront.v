@@ -279,8 +279,8 @@ module BattleFront(
 				ADJUST:
 				begin
 					state <= DONE;
-					friendlyFront <= friendlyFront - 6;
-					enemyFront <= enemyFront + 7;
+					friendlyFront <= friendlyFront - 10;
+					enemyFront <= enemyFront + 10;
 				end
 				DONE:
 				begin

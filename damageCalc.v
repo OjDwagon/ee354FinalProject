@@ -173,7 +173,7 @@ module DamageCalc(
 					I <= I + 1;
 					
 					totalUnitDamage <= totalUnitDamage + {4'b0000, currUnitDamage};
-					totalEnemyDamage <= totalUnitDamage + {4'b0000, currEnemyDamage};
+					totalEnemyDamage <= totalEnemyDamage + {4'b0000, currEnemyDamage};
 					
 				end
 				DONE:
