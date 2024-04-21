@@ -51,6 +51,7 @@ module BattleCatsTopTB;
 	wire battlefrontACK;
 	wire damageCalcACK;
 	wire moveSCEN, damageSCEN;
+	wire damageCalcStart;
 	
 		// Generate gameSCEN 
 	reg [5:0] gameCounter;
@@ -251,7 +252,8 @@ module BattleCatsTopTB;
 	.battlefrontACK(battlefrontACK),
 	.damageCalcACK(damageCalcACK),
 	.moveSCEN(moveSCEN), 
-	.damageSCEN(damageSCEN)
+	.damageSCEN(damageSCEN),
+	.damageCalcStart(damageCalcStart)
 	);
 	
 	BattleFront battlefrontCalc(	
@@ -373,7 +375,7 @@ module BattleCatsTopTB;
 	DamageCalc damageCalc(
 		.clk(ClkPort),
 		.rst(Reset),
-		.Start(damageSCEN),
+		.Start(damageCalcStart),
 		.Ack(damageCalcACK),
 		.unitAttack0(unitAttack0), 
 		.unitAttack1(unitAttack1),
@@ -408,7 +410,7 @@ module BattleCatsTopTB;
 		.enemyAttack14(enemyAttack14),
 		.enemyAttack15(enemyAttack15),
 		.totalUnitDamage(totalUnitDamage),
-		.totalEnemyDamage(totalEnemyDamage),
+		.totalEnemyDamage(totalEnemyDamage), // Sum of enemy attacks
 		.Done(damageCalcDone)
    );
    

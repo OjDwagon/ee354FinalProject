@@ -50,7 +50,7 @@ module BattleCatsTop(
 	wire battlefrontDone;
 	wire battlefrontACK;
 	wire damageCalcACK;
-	wire moveSCEN, damageSCEN;
+	wire moveSCEN, damageSCEN, damageCalcStart;
 	
 	// Unit and enemy location signals
 	wire [8:0] unitLoc0, unitLoc1, unitLoc2, 
@@ -262,7 +262,8 @@ module BattleCatsTop(
 	.battlefrontACK(battlefrontACK),
 	.damageCalcACK(damageCalcACK),
 	.moveSCEN(moveSCEN), 
-	.damageSCEN(damageSCEN)
+	.damageSCEN(damageSCEN),
+	.damageCalcStart(damageCalcStart)
 	);
 	
 	BattleFront battlefrontCalc(	
@@ -384,7 +385,7 @@ module BattleCatsTop(
 	DamageCalc damageCalc(
 		.clk(ClkPort),
 		.rst(Reset),
-		.Start(damageSCEN),
+		.Start(damageCalcStart),
 		.Ack(damageCalcACK),
 		.unitAttack0(unitAttack0), 
 		.unitAttack1(unitAttack1),

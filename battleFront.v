@@ -267,12 +267,12 @@ module BattleFront(
 					if(currEnemyType != 2'b00 && currEnemyLoc > enemyFront)
 					begin
 						enemyFront <= currEnemyLoc;
-						enemyDamageSelect <= I;
+						enemyDamageSelect <= {1'b0, I};
 					end
 					if(currUnitType != 2'b00 && currUnitLoc < friendlyFront)
 					begin
 						friendlyFront <= currUnitLoc;
-						unitDamageSelect <= I;
+						unitDamageSelect <= {1'b0, I};
 					end
 					
 				end

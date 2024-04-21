@@ -8,6 +8,7 @@ module TopCore(
 	input battlefrontDone, // comes from battlefrontCalculator 
 	input gameSCEN, // from gameEngine.v
 	
+	output damageCalcStart,
 	output reg battlefrontACK, // gives battelfront signal an ACK signal, so it can move from DONE state to start calculating again
 	output reg damageCalcACK,
 	
@@ -27,7 +28,8 @@ localparam
 reg [5:0] state;
 
 assign moveSCEN = state[4];
-assign damageSCEN = state[3];
+assign damageCalcStart = state[3];
+assign damageSCEN = state[1];
 
 always@(posedge clk, posedge reset)
 begin
