@@ -1,26 +1,5 @@
 `timescale 1ns / 1ps
-//////////////////////////////////////////////////////////////////////////////////
-// Company: 
-// Engineer: 
-// 
-// Create Date:    12:18:00 12/14/2017 
-// Design Name: 
-// Module Name:    vga_top 
-// Project Name: 
-// Target Devices: 
-// Tool versions: 
-// Description: 
-//
-// Dependencies: 
-//
-// Revision: 
-// Revision 0.01 - File Created
-// Additional Comments: 
-//
-// Date: 04/04/2020
-// Author: Yue (Julien) Niu
-// Description: Port from NEXYS3 to NEXYS4
-//////////////////////////////////////////////////////////////////////////////////
+
 module BattleCatsTop(
 	input ClkPort,
 	input BtnC,
@@ -28,9 +7,7 @@ module BattleCatsTop(
 	input BtnR,
 	input BtnL,
 	input BtnD,
-	input Sw1,
-	input Sw2, // these need to be Sw instead of SW following XDC file
-	input Sw3,
+	
 	//VGA signal
 	output hSync, vSync,
 	output [3:0] vgaR, vgaG, vgaB,
@@ -47,9 +24,7 @@ module BattleCatsTop(
 	wire[9:0] hc, vc;
 	wire[15:0] score;
 	wire up,down,left,right;
-	//wire [3:0] anode;
 	wire [11:0] rgb;
-	// wire rst; // should this be edited ------------------------------------------------------
 	
 	reg [3:0]	SSD;
 	wire [3:0]	SSD3, SSD2, SSD1, SSD0;
@@ -64,8 +39,7 @@ module BattleCatsTop(
 	  else
 			DIV_CLK <= DIV_CLK + 1'b1;
 	end
-	// wire move_clk;
-	// assign move_clk=DIV_CLK[0]; //slower clock to drive the movement of objects on the vga screen
+	
 	wire [11:0] background;
 	
 	// Stuff I'm adding
@@ -123,8 +97,6 @@ module BattleCatsTop(
         enemyAttack11, enemyAttack12, enemyAttack13, 
         enemyAttack14, enemyAttack15;
 	
-	//assign purchase = 1'b1; // For now we are having it so that the purchase signal is always up
-	
 	// enemy and unit wiring (changed to 2 bits)
 	wire [1:0] unitType0, unitType1, unitType2, unitType3,
 	unitType4, unitType5, unitType6, unitType7, unitType8,
@@ -133,15 +105,6 @@ module BattleCatsTop(
 	enemyType3, enemyType4, enemyType5, enemyType6, enemyType7,
 	enemyType8, enemyType9, enemyType10, enemyType11, enemyType12,
 	enemyType13, enemyType14, enemyType15;
-	
-	/*reg [8:0] fakeUnitLoc0;
-	
-	always @(posedge gameSCEN)
-	begin
-		if(Reset) fakeUnitLoc0 <= 9'b1111_1111_1;
-		else fakeUnitLoc0 <= fakeUnitLoc0 + 1;
-	
-	end*/
 	
 	// Debouncer SCEN signals
 	wire pauseCCEN;
@@ -156,22 +119,19 @@ module BattleCatsTop(
 	ee201_debouncer #(.N_dc(25)) right_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(rightSCEN), .MCEN(), .CCEN());
 	ee201_debouncer #(.N_dc(25)) down_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(downSCEN), .MCEN(), .CCEN());
 	
-	// money SCEN
+	/*// money SCEN
 	wire left_money_SCEN;
 	wire right_money_SCEN;
 	wire down_money_SCEN;
 	
 	//debouncers for the money_clock specifically
-	ee201_debouncer #(.N_dc(25)) left__money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnL), .DPB(left_money_SCEN), .SCEN(), .MCEN(), .CCEN());
-	ee201_debouncer #(.N_dc(25)) right_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnR), .DPB(right_money_SCEN), .SCEN(), .MCEN(), .CCEN());
-	ee201_debouncer #(.N_dc(25)) down_money_debouncer(.CLK(DIV_CLK[22]), .RESET(Reset), .PB(BtnD), .DPB(down_money_SCEN), .SCEN(), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) left_money_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnL), .DPB(), .SCEN(left_money_SCEN), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) right_money_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(right_money_SCEN), .MCEN(), .CCEN());
+	ee201_debouncer #(.N_dc(25)) down_money_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(down_money_SCEN), .MCEN(), .CCEN());
 	
-	
-	reg [15:0] money_counter;
-	
-	always@(posedge DIV_CLK[22], posedge Reset)
+	 always@(posedge DIV_CLK[22], posedge Reset, posedge left_money_SCEN, posedge right_money_SCEN, posedge down_money_SCEN)
 	begin : MONEY_COUNTER
-		if(Reset) money_counter <= 0;
+		if(Reset ) money_counter <= 0;
 		else
 			begin
 				if(~pauseCCEN) begin // pausing the game should also pause the counter
@@ -179,6 +139,29 @@ module BattleCatsTop(
 						money_counter <= money_counter + 1'b1;
 					if((right_money_SCEN || left_money_SCEN || down_money_SCEN) && money_counter >= 16'd100) // so no wrap around
 						money_counter <= money_counter - 16'd100;
+				end
+			end
+	end */
+	
+	// changing this to a cool down counter, so basically, you can only spawn a troop once you've reached 100
+	
+	reg enoughMoney;
+	reg [15:0] money_counter;
+	
+	always@(posedge DIV_CLK[20], posedge Reset, posedge BtnR, posedge BtnL, posedge BtnD)
+	begin : MONEY_COUNTER
+		if(Reset) money_counter <= 0;
+		else
+			begin
+				if(~pauseCCEN) begin // pausing the game should also pause the counter
+					if(money_counter != 100) // stop incrementing when we reach the top
+						money_counter <= money_counter + 1'b1;
+						
+					if(money_counter >= 100) enoughMoney <= 1'b1;
+					else enoughMoney <= 1'b0;
+					
+					if((BtnR || BtnL || BtnD) && money_counter >= 100) money_counter <= 0;
+					
 				end
 			end
 	end
@@ -191,12 +174,17 @@ module BattleCatsTop(
 	assign {Ca, Cb, Cc, Cd, Ce, Cf, Cg} = ssdOut[6 : 0];
     assign {An7, An6, An5, An4, An3, An2, An1, An0} = {4'b1111, anode};
 	
-	//wire canSpawn;
-	//assign canSpawn = 1'b1;
-	
 	wire [15:0] dead;
 	wire [15:0] canSpawn;
-	PriorityResolver priorityresolver(.requestSignals(dead), .grantSignals(canSpawn));
+	wire [15:0] unitGrants;
+	
+	assign canSpawn = unitGrants & 
+	{enoughMoney, enoughMoney, enoughMoney, enoughMoney,
+	enoughMoney, enoughMoney, enoughMoney, enoughMoney,
+	enoughMoney, enoughMoney, enoughMoney, enoughMoney,
+	enoughMoney, enoughMoney, enoughMoney, enoughMoney};
+	
+	PriorityResolver priorityresolver(.requestSignals(dead), .grantSignals(unitGrants));
 	
 	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN), .debouncedBtnU(pauseCCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
@@ -265,7 +253,6 @@ module BattleCatsTop(
 	.enemyType13(enemyType13),
 	.enemyType14(enemyType14),
 	.enemyType15(enemyType15));
-	
 
 	TopCore core(.clk(ClkPort),
 	.reset(Reset),
@@ -695,7 +682,15 @@ module BattleCatsTop(
 
 	wire [15:0] enemyDead;
 	wire [15:0] enemyCanSpawn;
-	PriorityResolver enemy_priorityresolver(.requestSignals(enemyDead), .grantSignals(enemyCanSpawn));
+	wire [15:0] enemyGrants;
+	
+	PriorityResolver enemy_priorityresolver(.requestSignals(enemyDead), .grantSignals(enemyGrants));
+	
+	assign enemyCanSpawn = enemyGrants & 
+	{DIV_CLK[22], DIV_CLK[5], DIV_CLK[4], DIV_CLK[3],
+	DIV_CLK[20], DIV_CLK[6], DIV_CLK[7], DIV_CLK[27],
+	DIV_CLK[19], DIV_CLK[10], DIV_CLK[8], DIV_CLK[21],
+	DIV_CLK[24], DIV_CLK[16], DIV_CLK[26], DIV_CLK[25]};
 
 	Enemy enemy0(
 		.clk(ClkPort), 

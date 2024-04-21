@@ -483,9 +483,16 @@ module renderer(
 	end
 	
 	//the background color reflects the most recent button press
+	
+	// top left corner of the screen is (0,0) for (hCount, vCount)
+	// travelling down the screen makes vCount increase, and traveling right makes hCount increase
 	always@(posedge clk) begin
 		if(vCount > 395) background <= 12'b0010_1101_0010;
-		else background <= 12'b0011_0111_1011;
+		else begin // vCount < 395, towers should be 80 pixels tall by 40 pixels wide
+			if(vCount > 315 && hCount > 163 && hCount < 203) background <= 12'b1101_0011_0010; // enemy tower
+			else if(vCount > 315 && hCount > 715 && hCount < 755) background <= 12'b0100_1111_1001; // player tower
+			else background <= 12'b0011_0111_1011;
+		end
 	end
 
 	

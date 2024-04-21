@@ -2,63 +2,31 @@
 
 module Unit(
 	input clk, 
-	//input gameClk,
 	input reset,
-	
 	input moveSCEN,
 	input damageSCEN,
-	
 	input [7:0] damageIn,
-	
-	/*input SW0,
-	input SW1,
-	input SW2,
-	input SW3,*/
-	
 	input leftSCEN,
 	input rightSCEN,
 	input downSCEN,
-
-	
+	input canSpawn,
 	input [8:0] enemyFront, // location of the frontmost enemy
-	
 	output reg [8:0] position, // choose how many bits we need for position
 	output reg [7:0] damageOut, // choose how many bits we need for damage
-	
 	output reg [1:0] unitType,// 00 dead, 1-3 different unit types
-	
-	// These outputs are for running testbenches, have an uncommented version of this in another file
-	/*output q_I,
-	output q_Deploy1,
-	output q_Deploy2,
-	output q_Deploy3,
-	output q_Alive,
-	
-	output reg [7:0] health*/
-	
-	input canSpawn,
 	output reg dead
-
 );
 
 reg [7:0] power; // determines how strong an enemy's attack is
 reg [7:0] health; // internal to the unit, keeps track how much health they have left
-//reg [3:0] I; // dummy counter for dead state
-
 reg [4:0] state;
-
-reg [3:0] counter;
-
-// assign {q_I, q_Deploy1, q_Deploy2, q_Deploy3, q_Alive} = state;
 
 localparam
 	QI =       5'b10000,
-	//QDeploy0 = 7'b0100000,
 	QDeploy1 = 5'b01000,
 	QDeploy2 = 5'b00100,
 	QDeploy3 = 5'b00010,
 	QAlive   = 5'b00001,
-//	QDead =    7'b0000001,
 	UNK =      5'bXXXXX;
 
 always@(posedge clk, posedge reset) // might have to the change this from clk to gameClk later
@@ -73,13 +41,10 @@ begin
 					// state transition
 					unitType <= 2'b00;
 					dead <= 1'b1;
-					
-					//if(counter == 4'b1111) 
 					begin
 						if(canSpawn)
 						begin
 							case({leftSCEN, rightSCEN, downSCEN})
-								//4'b1000: state <= QDeploy0;
 								3'b100: state <= QDeploy1;
 								3'b010: state <= QDeploy2;
 								3'b001: state <= QDeploy3;
@@ -87,26 +52,19 @@ begin
 						end
 					end
 					
-					//else counter <= counter + 4'b0001;
 			
 					// RTL
 					position <= 9'b1111_1111_1;
-					//I <= 3'b000;
-					// damageIn <= 8'b0000_0000;
 					damageOut <= 8'b0000_0000;
 					power <= 8'b0000_0000;
 				end
-			/*QDeploy0:
-				begin 
-					health <= 8'b1111_1111;
-					power <= 8'b0001_0000;
-				end*/
 			QDeploy1:
 				begin
 					state <= QAlive;
 					health <= 8'b1111_1111;
 					power <= 8'b0010_0000;
 					unitType <= 2'b01;
+					dead <= 1'b0;
 				end
 			QDeploy2:
 				begin
@@ -114,6 +72,7 @@ begin
 					health <= 8'b1111_1111;
 					power <= 8'b0100_0000;
 					unitType <= 2'b10;
+					dead <= 1'b0;
 				end
 			QDeploy3:
 				begin
@@ -121,6 +80,7 @@ begin
 					health <= 8'b1111_1111;
 					power <= 8'b1000_0000; 
 					unitType <= 2'b11;
+					dead <= 1'b0;
 				end
 			QAlive:
 				begin
@@ -128,12 +88,10 @@ begin
 					if(health <= damageIn)
 						begin
 							state <= QI;
-							//unitType <= 2'b00;
-							//dead <= 1'b1;
+							unitType <= 2'b00;
+							dead <= 1'b1;
 						end
 					// RTL
-					
-					dead <= 1'b0;
 					
 					// accept damage provided by TOP, can be 0 to whatever the attack damage is of enemy units
 					if(damageSCEN) health <= health - damageIn;
