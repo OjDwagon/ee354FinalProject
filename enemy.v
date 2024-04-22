@@ -6,6 +6,7 @@ module Enemy(
 	input moveSCEN,
 	input damageSCEN,
 	input canSpawn,
+	input [1:0] spawnType,
 	input [7:0] damageIn,
 	input [8:0] unitFront, // location of the frontmost unit
 	output reg [8:0] position, // choose how many bits we need for position
@@ -38,7 +39,14 @@ begin
 					enemyType <= 2'b00;
 					dead <= 1'b1;
 					
-					if(canSpawn) state <= QDeploy1; // making all enemies type 1 for now
+					if(canSpawn) begin
+						case(spawnType) 
+							2'b00: state <= QDeploy1;
+							2'b01: state <= QDeploy1;
+							2'b10: state <= QDeploy2;
+							2'b11: state <= QDeploy3;
+						endcase
+					end
 					
 					// RTL
 					position <= 9'b0000_0000_0; // CHANGED FROM PLAYER
@@ -50,7 +58,7 @@ begin
 				begin
 					state <= QAlive;
 					health <= 8'b1111_1111;
-					power <= 8'b0010_0000;
+					power <= 8'b0000_1111;
 					enemyType <= 2'b01;
 					dead <= 1'b0;
 				end
@@ -58,7 +66,7 @@ begin
 				begin
 					state <= QAlive;
 					health <= 8'b1111_1111;
-					power <= 8'b0100_0000;
+					power <= 8'b0001_0000;
 					enemyType <= 2'b10;
 					dead <= 1'b0;
 				end
@@ -66,7 +74,7 @@ begin
 				begin
 					state <= QAlive;
 					health <= 8'b1111_1111;
-					power <= 8'b1000_0000;
+					power <= 8'b1000_0101;
 					enemyType <= 2'b11;
 					dead <= 1'b0;
 				end

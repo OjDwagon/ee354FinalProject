@@ -18,18 +18,18 @@ module BattleCatsTop(
 	
 	output MemOE, MemWR, RamCS, QuadSpiFlashCS
 	);
+	
 	wire Reset;
 	assign Reset=BtnC;
 	wire bright;
 	wire[9:0] hc, vc;
-	wire[15:0] score;
-	wire up,down,left,right;
 	wire [11:0] rgb;
 	
+	/*
 	reg [3:0]	SSD;
 	wire [3:0]	SSD3, SSD2, SSD1, SSD0;
 	reg [7:0]  	SSD_CATHODES;
-	wire [1:0] 	ssdscan_clk;
+	wire [1:0] 	ssdscan_clk; */
 	
 	reg [27:0]	DIV_CLK;
 	always @ (posedge ClkPort, posedge Reset)  
@@ -119,56 +119,17 @@ module BattleCatsTop(
 	ee201_debouncer #(.N_dc(25)) right_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(rightSCEN), .MCEN(), .CCEN());
 	ee201_debouncer #(.N_dc(25)) down_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(downSCEN), .MCEN(), .CCEN());
 	
-	/*// money SCEN
-	wire left_money_SCEN;
-	wire right_money_SCEN;
-	wire down_money_SCEN;
-	
-	//debouncers for the money_clock specifically
-	ee201_debouncer #(.N_dc(25)) left_money_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnL), .DPB(), .SCEN(left_money_SCEN), .MCEN(), .CCEN());
-	ee201_debouncer #(.N_dc(25)) right_money_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnR), .DPB(), .SCEN(right_money_SCEN), .MCEN(), .CCEN());
-	ee201_debouncer #(.N_dc(25)) down_money_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(down_money_SCEN), .MCEN(), .CCEN());
-	
-	 always@(posedge DIV_CLK[22], posedge Reset, posedge left_money_SCEN, posedge right_money_SCEN, posedge down_money_SCEN)
-	begin : MONEY_COUNTER
-		if(Reset ) money_counter <= 0;
-		else
-			begin
-				if(~pauseCCEN) begin // pausing the game should also pause the counter
-					if(money_counter != 14'd9999) // stop incrementing when we reach the top
-						money_counter <= money_counter + 1'b1;
-					if((right_money_SCEN || left_money_SCEN || down_money_SCEN) && money_counter >= 16'd100) // so no wrap around
-						money_counter <= money_counter - 16'd100;
-				end
-			end
-	end */
-	
-	// changing this to a cool down counter, so basically, you can only spawn a troop once you've reached 100
-	
-	reg enoughMoney;
-	reg [15:0] money_counter;
-	
-	always@(posedge DIV_CLK[20], posedge Reset, posedge BtnR, posedge BtnL, posedge BtnD)
-	begin : MONEY_COUNTER
-		if(Reset) money_counter <= 0;
-		else
-			begin
-				if(~pauseCCEN) begin // pausing the game should also pause the counter
-					if(money_counter != 100) // stop incrementing when we reach the top
-						money_counter <= money_counter + 1'b1;
-						
-					if(money_counter >= 100) enoughMoney <= 1'b1;
-					else enoughMoney <= 1'b0;
-					
-					if((BtnR || BtnL || BtnD) && money_counter >= 100) money_counter <= 0;
-					
-				end
-			end
+	reg [15:0] score;
+	always@(posedge ClkPort, posedge Reset) begin
+		if(Reset) score <= 0;
+		else begin
+			if(friendlyFront == 0) score <= score + 1;  
+		end
 	end
 	
 	wire [6:0] ssdOut;
 	wire [3:0] anode;
-	counter cnt(.clk(ClkPort), .displayNumber(money_counter), .anode(anode), .ssdOut(ssdOut));
+	counter cnt(.clk(ClkPort), .displayNumber(score), .anode(anode), .ssdOut(ssdOut));
 	
 	assign Dp = 1;
 	assign {Ca, Cb, Cc, Cd, Ce, Cf, Cg} = ssdOut[6 : 0];
@@ -176,19 +137,12 @@ module BattleCatsTop(
 	
 	wire [15:0] dead;
 	wire [15:0] canSpawn;
-	wire [15:0] unitGrants;
 	
-	assign canSpawn = unitGrants & 
-	{enoughMoney, enoughMoney, enoughMoney, enoughMoney,
-	enoughMoney, enoughMoney, enoughMoney, enoughMoney,
-	enoughMoney, enoughMoney, enoughMoney, enoughMoney,
-	enoughMoney, enoughMoney, enoughMoney, enoughMoney};
-	
-	PriorityResolver priorityresolver(.requestSignals(dead), .grantSignals(unitGrants));
+	PriorityResolver priorityresolver(.requestSignals(dead), .grantSignals(canSpawn));
 	
 	GameEngine engine(.clk(ClkPort), .rst(Reset), .gameSCEN(gameSCEN), .debouncedBtnU(pauseCCEN));
 	display_controller dc(.clk(ClkPort), .hSync(hSync), .vSync(vSync), .bright(bright), .hCount(hc), .vCount(vc));
-	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .up(BtnU), .down(BtnD),.left(BtnL),.right(BtnR),.hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
+	renderer sc(.clk(ClkPort), .bright(bright), .gameSCEN(gameSCEN), .rst(BtnC), .hCount(hc), .vCount(vc), .rgb(rgb), .background(background),
 	.unitLoc0(unitLoc0),
 	.unitLoc1(unitLoc1),
 	.unitLoc2(unitLoc2),
@@ -426,7 +380,6 @@ module BattleCatsTop(
    
 	Unit unit0(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -442,7 +395,6 @@ module BattleCatsTop(
 	);
 	Unit unit1(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -458,7 +410,6 @@ module BattleCatsTop(
 	);
 	Unit unit2(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -474,7 +425,6 @@ module BattleCatsTop(
 	);
 	Unit unit3(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -490,7 +440,6 @@ module BattleCatsTop(
 	);
 	Unit unit4(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -506,7 +455,6 @@ module BattleCatsTop(
 	);
 	Unit unit5(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -522,7 +470,6 @@ module BattleCatsTop(
 	);
 	Unit unit6(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -538,7 +485,6 @@ module BattleCatsTop(
 	);
 	Unit unit7(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -554,7 +500,6 @@ module BattleCatsTop(
 	);	
 	Unit unit8(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -570,7 +515,6 @@ module BattleCatsTop(
 	);
 	Unit unit9(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -586,7 +530,6 @@ module BattleCatsTop(
 	);
 	Unit unit10(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -602,7 +545,6 @@ module BattleCatsTop(
 	);
 	Unit unit11(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -618,7 +560,6 @@ module BattleCatsTop(
 	);
 	Unit unit12(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -634,7 +575,6 @@ module BattleCatsTop(
 	);
 	Unit unit13(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -650,7 +590,6 @@ module BattleCatsTop(
 	);
 	Unit unit14(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -666,7 +605,6 @@ module BattleCatsTop(
 	);
 	Unit unit15(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -692,10 +630,13 @@ module BattleCatsTop(
 	DIV_CLK[20], DIV_CLK[6], DIV_CLK[7], DIV_CLK[27],
 	DIV_CLK[19], DIV_CLK[10], DIV_CLK[8], DIV_CLK[21],
 	DIV_CLK[24], DIV_CLK[16], DIV_CLK[26], DIV_CLK[25]};
+	
+	wire [1:0] spawnType;
+	assign spawnType = {DIV_CLK[21], DIV_CLK[20]};
 
 	Enemy enemy0(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -708,7 +649,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy1(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -721,7 +662,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy2(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -734,7 +675,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy3(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -747,7 +688,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy4(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -760,7 +701,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy5(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -773,7 +714,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy6(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -786,7 +727,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy7(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -799,7 +740,7 @@ module BattleCatsTop(
 	);	
 	Enemy enemy8(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -812,7 +753,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy9(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -825,7 +766,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy10(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -838,7 +779,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy11(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -851,7 +792,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy12(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -864,7 +805,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy13(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -877,7 +818,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy14(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),
@@ -890,7 +831,7 @@ module BattleCatsTop(
 	);
 	Enemy enemy15(
 		.clk(ClkPort), 
-		//.gameClk(gameSCEN),
+		.spawnType(spawnType),
 		.reset(Reset),
 		.moveSCEN(moveSCEN),
 		.damageSCEN(damageSCEN),

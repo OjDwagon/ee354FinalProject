@@ -5,7 +5,6 @@ module renderer(
 	input clk, // Main clock for scanning
 	input bright,
 	input rst,
-	input up, input down, input left, input right,
 	input [9:0] hCount, vCount,
 	input gameSCEN, //this SCEN must be a slow enough to view the changing positions of the objects
 	input [8:0] unitLoc0,
