@@ -123,7 +123,7 @@ module BattleCatsTop(
 	always@(posedge ClkPort, posedge Reset) begin
 		if(Reset) score <= 0;
 		else begin
-			if(friendlyFront == 0) score <= score + 1;  
+			if((friendlyFront == 0)) score <= score + 1;  
 		end
 	end
 	

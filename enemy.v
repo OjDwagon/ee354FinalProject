@@ -57,7 +57,7 @@ begin
 			QDeploy1:
 				begin
 					state <= QAlive;
-					health <= 8'b1111_1111;
+					health <= 8'b1001_1111;
 					power <= 8'b0000_1111;
 					enemyType <= 2'b01;
 					dead <= 1'b0;
@@ -65,7 +65,7 @@ begin
 			QDeploy2:
 				begin
 					state <= QAlive;
-					health <= 8'b1111_1111;
+					health <= 8'b0111_1011;
 					power <= 8'b0001_0000;
 					enemyType <= 2'b10;
 					dead <= 1'b0;
@@ -73,7 +73,7 @@ begin
 			QDeploy3:
 				begin
 					state <= QAlive;
-					health <= 8'b1111_1111;
+					health <= 8'b1001_1011;
 					power <= 8'b1000_0101;
 					enemyType <= 2'b11;
 					dead <= 1'b0;
