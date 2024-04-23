@@ -32,8 +32,11 @@ module GameEngine(
 			case(state)				
 				WAIT:
 				begin
-					if(counter == 19'b1111_1111_1111_1111_110) state <= ADVANCE;
-					counter <= counter + 1;
+					if(~debouncedBtnU)
+					begin
+						if(counter == 19'b1111_1111_1111_1111_110) state <= ADVANCE;
+						counter <= counter + 1;
+					end
 				end
 				
 				ADVANCE:
