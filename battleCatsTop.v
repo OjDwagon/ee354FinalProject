@@ -7,6 +7,7 @@ module BattleCatsTop(
 	input BtnR,
 	input BtnL,
 	input BtnD,
+	input Sw0,
 	
 	//VGA signal
 	output hSync, vSync,
@@ -120,10 +121,12 @@ module BattleCatsTop(
 	ee201_debouncer #(.N_dc(25)) down_debouncer(.CLK(ClkPort), .RESET(Reset), .PB(BtnD), .DPB(), .SCEN(downSCEN), .MCEN(), .CCEN());
 	
 	reg [15:0] score;
-	always@(posedge ClkPort, posedge Reset) begin
+	always@(posedge DIV_CLK[22], posedge Reset) begin
 		if(Reset) score <= 0;
 		else begin
-			if((friendlyFront == 0)) score <= score + 1;  
+			if((friendlyFront <= 10)) begin
+				if(score < 14'd9999) score <= score+1;
+			end   
 		end
 	end
 	
@@ -629,7 +632,10 @@ module BattleCatsTop(
 	{DIV_CLK[22], DIV_CLK[5], DIV_CLK[4], DIV_CLK[3],
 	DIV_CLK[20], DIV_CLK[6], DIV_CLK[7], DIV_CLK[27],
 	DIV_CLK[19], DIV_CLK[10], DIV_CLK[8], DIV_CLK[21],
-	DIV_CLK[24], DIV_CLK[16], DIV_CLK[26], DIV_CLK[25]};
+	DIV_CLK[24], DIV_CLK[16], DIV_CLK[26], DIV_CLK[25]} &
+	{Sw0, Sw0, Sw0, Sw0,
+	Sw0, Sw0, Sw0, Sw0,
+	Sw0, Sw0, Sw0, Sw0};
 	
 	wire [1:0] spawnType;
 	assign spawnType = {DIV_CLK[21], DIV_CLK[20]};

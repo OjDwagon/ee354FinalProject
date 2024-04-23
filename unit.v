@@ -62,7 +62,7 @@ begin
 				begin
 					state <= QAlive;
 					health <= 8'b1111_1111;
-					power <= 8'b0010_0000;
+					power <= 8'b0000_0001;
 					unitType <= 2'b01;
 					dead <= 1'b0;
 				end
