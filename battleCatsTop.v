@@ -124,9 +124,11 @@ module BattleCatsTop(
 	always@(posedge DIV_CLK[22], posedge Reset) begin
 		if(Reset) score <= 0;
 		else begin
-			if((friendlyFront <= 10)) begin
-				if(score < 14'd9999) score <= score+1;
-			end   
+			if(~pauseCCEN) begin
+				if((friendlyFront <= 10)) begin
+					if(score < 14'd9999) score <= score+1;
+				end
+			end
 		end
 	end
 	
